@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -150,18 +150,29 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\stb\stb_image.h" />
+    <ClInclude Include="src\Engine\Core\LoaderManager.hpp" />
+    <ClInclude Include="src\Engine\Renderer\AssetManager.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\FrameBuffer.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\Material.hpp" />
     <ClInclude Include="src\Engine\Core\Input.hpp" />
     <ClInclude Include="src\Engine\Core\Log.hpp" />
     <ClInclude Include="src\Engine\Core\Window.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\Model.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\Shader.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\Texture.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Renderer.hpp" />
+    <ClInclude Include="src\Engine\Renderer\RenderPass.hpp" />
+    <ClInclude Include="src\Engine\Renderer\RenderPipeline.hpp" />
     <ClInclude Include="src\Engine\Resources\Loaders\ModelLoader.hpp" />
     <ClInclude Include="src\Engine\Resources\Loaders\ShaderLoader.hpp" />
     <ClInclude Include="src\Engine\Resources\Loaders\TextureLoader.hpp" />
     <ClInclude Include="src\Engine\Resources\ResourceManager.hpp" />
-    <ClInclude Include="src\Engine\Scene\Components\Camera.hpp" />
-    <ClInclude Include="src\Engine\Scene\Components\Component.hpp" />
-    <ClInclude Include="src\Engine\Scene\Components\Transform.hpp" />
-    <ClInclude Include="src\Engine\Scene\Entity.hpp" />
-    <ClInclude Include="src\Engine\Scene\EntityManager.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Camera.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Component.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\MeshRender.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Transform.hpp" />
+    <ClInclude Include="src\Engine\Entity\Entity.hpp" />
+    <ClInclude Include="src\Engine\Entity\EntityManager.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

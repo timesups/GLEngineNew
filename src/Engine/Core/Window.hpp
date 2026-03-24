@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>//负责创建opengl的窗口
 #include <functional>
 
-#include "../Engine/core/Log.hpp"
+#include "../Core/Log.hpp"
 
 
 #define MODULE "Window"

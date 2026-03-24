@@ -28,7 +28,7 @@ public:
 	template<typename T>
 	T* GetComponent()
 	{
-		static(std::is_base_of<Component, T>::value, "T must derive form component");
+		static_assert(std::is_base_of<Component, T>::value, "T must derive form component");
 
 		auto it = m_components.find(typeid(T));
 		if (it != m_components.end()) {
@@ -40,7 +40,7 @@ public:
 	template<typename T>
 	const T* GetComponent() const
 	{
-		static(std::is_base_of<Component, T>::value, "T must derive form component");
+		static_assert(std::is_base_of<Component, T>::value, "T must derive form component");
 
 		auto it = m_components.find(typeid(T));
 		if (it != m_components.end()) {
@@ -52,7 +52,7 @@ public:
 	template<typename T>
 	void RemoveComponent()
 	{
-		static(std::is_base_of<Component, T>::value, "T must derive form component");
+		static_assert(std::is_base_of<Component, T>::value, "T must derive form component");
 		m_components.erase(typeid(T));
 	}
 

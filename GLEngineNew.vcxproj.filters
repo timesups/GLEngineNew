@@ -14,10 +14,21 @@
     <ClInclude Include="src\Engine\Resources\Loaders\ShaderLoader.hpp" />
     <ClInclude Include="src\Engine\Resources\Loaders\TextureLoader.hpp" />
     <ClInclude Include="src\Engine\Resources\ResourceManager.hpp" />
-    <ClInclude Include="src\Engine\Scene\Components\Transform.hpp" />
-    <ClInclude Include="src\Engine\Scene\Entity.hpp" />
-    <ClInclude Include="src\Engine\Scene\Components\Component.hpp" />
-    <ClInclude Include="src\Engine\Scene\Components\Camera.hpp" />
-    <ClInclude Include="src\Engine\Scene\EntityManager.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Camera.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Component.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\MeshRender.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Transform.hpp" />
+    <ClInclude Include="src\Engine\Entity\Entity.hpp" />
+    <ClInclude Include="src\Engine\Entity\EntityManager.hpp" />
+    <ClInclude Include="src\Engine\Core\LoaderManager.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\Material.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Renderer.hpp" />
+    <ClInclude Include="src\Engine\Renderer\RenderPass.hpp" />
+    <ClInclude Include="src\Engine\Renderer\RenderPipeline.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\FrameBuffer.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\Model.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\Shader.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\Texture.hpp" />
+    <ClInclude Include="src\Engine\Renderer\AssetManager.hpp" />
   </ItemGroup>
 </Project>
