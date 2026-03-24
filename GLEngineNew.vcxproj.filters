@@ -3,11 +3,21 @@
   <ItemGroup>
     <ClCompile Include="src\GLEngne\main.cpp" />
     <ClCompile Include="external\glad\glad.c" />
-    <ClCompile Include="src\Engine\ThirdParty\stb_image.cpp" />
+    <ClCompile Include="external\stb\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Engine\Core\Window.hpp" />
     <ClInclude Include="external\stb\stb_image.h" />
     <ClInclude Include="src\Engine\Core\Log.hpp" />
+    <ClInclude Include="src\Engine\Core\Input.hpp" />
+    <ClInclude Include="src\Engine\Resources\Loaders\ModelLoader.hpp" />
+    <ClInclude Include="src\Engine\Resources\Loaders\ShaderLoader.hpp" />
+    <ClInclude Include="src\Engine\Resources\Loaders\TextureLoader.hpp" />
+    <ClInclude Include="src\Engine\Resources\ResourceManager.hpp" />
+    <ClInclude Include="src\Engine\Scene\Components\Transform.hpp" />
+    <ClInclude Include="src\Engine\Scene\Entity.hpp" />
+    <ClInclude Include="src\Engine\Scene\Components\Component.hpp" />
+    <ClInclude Include="src\Engine\Scene\Components\Camera.hpp" />
+    <ClInclude Include="src\Engine\Scene\EntityManager.hpp" />
   </ItemGroup>
 </Project>

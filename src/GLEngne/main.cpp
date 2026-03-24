@@ -1,30 +1,32 @@
 #include "../Engine/core/Window.hpp"
 
+class B;
+
+class A 
+{
+public:
+	A() = default;
+private:
+	int value1 = 20;
+	friend class B;
+	int value = 10;
+};
+
+class B
+{
+public:
+	B() 
+	{
+		std::cout << a.value1 << std::endl;
+	
+	}
+	A a;
+};
 
 
 
 
 int main() 
 {
-	Window window;
-	if (!window.Create(800, 600, "GLEngle")) 
-	{
-		return -1;
-	}
-
-
-
-	while (window.IsRunning())
-	{
-		glClearColor(1, 1, 1, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-
-
-
-
-
-
-		window.Update();
-	}
+	B b;
 }

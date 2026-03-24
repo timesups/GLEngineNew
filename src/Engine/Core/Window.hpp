@@ -1,6 +1,7 @@
 #pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>//负责创建opengl的窗口
+#include <functional>
 
 #include "../Engine/core/Log.hpp"
 
@@ -53,6 +54,10 @@ void scroll_callback(GLFWwindow* window, double xoffse, double yoffset)
 	//cam.SetFov(cam.GetFov() + yoffset * 0.1f);
 }
 
+
+
+using RenderPipelineCallback = std::function<void()>;
+
 class Window 
 {
 public:
@@ -98,31 +103,38 @@ public:
 		glfwSetCursorPosCallback(win, mouse_callback);
 		glfwSetScrollCallback(win, scroll_callback);
 
-
-		glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);//隐藏鼠标显示
+		//隐藏鼠标显示
+		glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	}
-	bool IsRunning() 
+	void Run() 
 	{
-		bool running = !glfwWindowShouldClose(win);
-		if(running)
+		while (!glfwWindowShouldClose(win))
 		{
+			//处理输入
 			processInput(win);
-		}
 
-		return running;
+
+			if (renderCallback) 
+			{
+				renderCallback();
+			}
+
+
+
+
+
+			glfwSwapBuffers(win);
+			glfwPollEvents();
+		}
 	}
-	void Update()
-	{
-		glfwSwapBuffers(win);
-		glfwPollEvents();
-	}
+
 public:
 	int vWidth;
 	int vHeight;
+	RenderPipelineCallback renderCallback;
 private:
 	GLFWwindow* win = nullptr;
-
 };
 
 
