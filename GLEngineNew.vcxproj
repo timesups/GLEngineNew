@@ -159,6 +159,7 @@
     <ClInclude Include="src\Engine\Core\Window.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\Model.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\Shader.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\ShaderPass.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\Texture.hpp" />
     <ClInclude Include="src\Engine\Renderer\Renderer.hpp" />
     <ClInclude Include="src\Engine\Renderer\RenderPass.hpp" />

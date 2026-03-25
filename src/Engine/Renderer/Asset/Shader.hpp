@@ -1,8 +1,11 @@
 #pragma once
 
+#include "ShaderPass.hpp"
 
-class Shader 
+class Shader
 {
-private:
-	unsigned int m_id;
+public:
+	Shader() = default;
+public:
+	std::vector<ShaderPass> passes;
 };

@@ -1,5 +1,7 @@
 #pragma once
 #include <memory>
+#include <fstream>
+
 
 
 #include "../../../external/stb/stb_image.h"
@@ -10,6 +12,9 @@
 
 
 #define MODULE "LoaderManager"
+
+
+
 
 class LoaderManager
 {
@@ -32,9 +37,46 @@ class LoaderManager
 		return tex;
 	}
 
-	static std::unique_ptr<Shader> LoadShaderFromFile(const char* path) 
-	{
 
+	static std::string ReadAndPerprocessShaderFile(const std::string& path)
+	{
+		std::string rootFolder = path.substr(0, path.find_last_of("/"));
+		std::ifstream shaderFile;
+
+		std::string shaderCode;
+		shaderFile.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+		try
+		{
+			shaderFile.open(path);
+			std::string line;
+			while (std::getline(shaderFile,line))
+			{
+				if (line.find("#include") != -1) 
+				{
+					int quotesStart = line.find_first_of("\"");
+					int quotesEnd = line.find_last_of("\"");
+
+					std::string includeFileName = rootFolder + "/" + line.substr(quotesStart + , quotesEnd - quotesStart - 1);
+
+				}
+
+			}
+		}
+		catch (const std::exception&)
+		{
+
+		}
+
+	}
+	static std::unique_ptr<Shader> LoadShaderFromFile(const std::string& path) 
+	{
+		std::string shaderName = path.substr(path.find_last_of("/") + 1);
+
+		
+
+
+		std::unique_ptr<Shader> shader = std::make_unique<Shader>();
+		return shader;
 	}
 
 
