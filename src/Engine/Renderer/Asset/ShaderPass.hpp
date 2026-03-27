@@ -3,7 +3,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 #include "../../Core/Log.hpp"
 
 
@@ -16,6 +15,33 @@ enum SHADERTYPE
 	GEOMETRY,
 	PROGRAM,
 };
+
+enum class CullMode
+{
+	BACK,//默认剔除背面
+	FRONT,//剔除正面
+	OFF,//双面渲染
+};
+
+
+enum class ZTEST 
+{
+	ALWAYS = GL_ALWAYS,     //永远通过深度测试  等于关闭深度测试
+	NEVER = GL_NEVER,       //永远不通过深度测试
+	LESS = GL_LESS,         //片段深度值小于深度缓冲时通过测试
+	EQUAL = GL_EQUAL,       //片段深度值等于深度缓冲时通过测试
+	LEQUAL = GL_LEQUAL,     //片段深度值小于等于深度缓冲时通过测试
+	GREATER = GL_GREATER,   //片段深度值大于深度缓冲时通过测试
+	NOTEQUAL = GL_NOTEQUAL, //片段深度值不等于深度缓冲时通过测试
+	GEQUAL = GL_GEQUAL,     //片段深度值大于等于深度缓冲时通过测试
+};
+
+
+
+struct ShaderPassOptions
+{
+	ZTEST zTest = ZTEST::LESS;
+}; 
 
 void CheckShaderCompileState(unsigned int ID, SHADERTYPE type);
 
@@ -118,8 +144,26 @@ public:
 	{
 		glUniform1i(glGetUniformLocation(m_id, name.c_str()), value);
 	}
+	ShaderPassOptions& GetOptions() 
+	{
+		return m_options;
+	}
+	void SetOptions(ShaderPassOptions options) 
+	{
+		m_options = options;
+	}
+	void SetName(const std::string& name)
+	{
+		m_name = name;
+	}
+	const std::string& GetName()
+	{
+		return m_name;
+	}
 private:
 	unsigned int m_id;
+	ShaderPassOptions m_options;
+	std::string m_name;
 };
 
 void CheckShaderCompileState(unsigned int ID, SHADERTYPE type)

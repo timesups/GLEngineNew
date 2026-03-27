@@ -1,7 +1,7 @@
 #pragma once
 #include <glad/glad.h>
 
-#include "../Core/Log.hpp"
+#include "../../Core/Log.hpp"
 
 #define MODULE "Texture"
 

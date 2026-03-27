@@ -5,7 +5,7 @@
 class EntityManager
 {
 public:
-	~EntityManager();
+	~EntityManager() {}
 private:
 	EntityManager();
 
