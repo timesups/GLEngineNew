@@ -8,11 +8,13 @@
 class Texture 
 {
 public:
-	Texture() :m_id(0), m_width(0), m_height(0), m_channels(0) {}
+	Texture() :m_width(0), m_height(0), m_channels(0) 
+	{
+		glGenTextures(GL_TEXTURE_2D, &m_id);
+	}
 	~Texture() {if (m_id) glDeleteTextures(1, &m_id);}//清理资源
 	bool CreateFromData(unsigned char* data, int width, int height, int channels) 
 	{
-		glGenTextures(GL_TEXTURE_2D, &m_id);
 		glBindTexture(GL_TEXTURE_2D, m_id);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -28,7 +30,6 @@ public:
 	}
 	bool CreateFromEmpty(int width, int height, int channels) 
 	{
-		glGenTextures(GL_TEXTURE_2D, &m_id);
 		glBindTexture(GL_TEXTURE_2D, m_id);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -68,6 +69,9 @@ public:
 		
 		m_isBound = false;
 	}
+public:
+	std::string m_path;
+	std::string m_name;
 private:
 	unsigned int m_id;
 	int m_width, m_height, m_channels;

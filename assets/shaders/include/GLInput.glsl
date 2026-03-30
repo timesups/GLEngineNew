@@ -9,8 +9,7 @@ layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec3 aColor;
 layout (location = 3) in vec3 aTangent;
 layout (location = 4) in vec2 aTexcoord0;
-layout (location = 5) in vec2 aTexcoord1;
-layout (location = 6) in vec2 aTexcoord2;
+
 
 
 layout(std140) uniform DataInputs

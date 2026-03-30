@@ -36,9 +36,16 @@ enum class ZTEST
 	GEQUAL = GL_GEQUAL,     //片段深度值大于等于深度缓冲时通过测试
 };
 
+struct PassCode
+{
+	std::string VertexShader;
+	std::string GeometryShader;
+	std::string FragmentShader;
+	std::string passName;
+};
 
 
-struct ShaderPassOptions
+struct PassOption
 {
 	ZTEST zTest = ZTEST::LESS;
 }; 
@@ -48,17 +55,16 @@ void CheckShaderCompileState(unsigned int ID, SHADERTYPE type);
 class ShaderPass
 {
 public:
-	ShaderPass() :m_id(0) {}
+	ShaderPass(const PassCode &code, PassOption option = PassOption())
+	{
+		if (code.GeometryShader.empty())
+			LoadFromCode(code.VertexShader.c_str(), code.FragmentShader.c_str());
+		else
+			LoadFromCode(code.VertexShader.c_str(), code.GeometryShader.c_str(), code.FragmentShader.c_str());
+		m_name = code.passName;
+		this->m_options = option;
+	}
 	~ShaderPass() { if (m_id != 0) glDeleteProgram(m_id); }
-
-	//禁止拷贝
-	ShaderPass(const ShaderPass&) = delete;
-	ShaderPass& operator=(const ShaderPass&) = delete;
-
-	//移动语义
-	ShaderPass(ShaderPass&& other) noexcept;
-	ShaderPass& operator=(ShaderPass&& other) noexcept;
-
 
 	void LoadFromCode(const char* vs, const char* fs)
 	{
@@ -83,7 +89,6 @@ public:
 		glDeleteShader(vid);
 		glDeleteShader(fid);
 	}
-
 
 	void LoadFromCode(const char* vs, const char* fs, const char* gs)
 	{
@@ -144,11 +149,11 @@ public:
 	{
 		glUniform1i(glGetUniformLocation(m_id, name.c_str()), value);
 	}
-	ShaderPassOptions& GetOptions() 
+	PassOption& GetOptions() 
 	{
 		return m_options;
 	}
-	void SetOptions(ShaderPassOptions options) 
+	void SetOptions(PassOption options) 
 	{
 		m_options = options;
 	}
@@ -162,7 +167,7 @@ public:
 	}
 private:
 	unsigned int m_id;
-	ShaderPassOptions m_options;
+	PassOption m_options;
 	std::string m_name;
 };
 

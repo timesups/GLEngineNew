@@ -1,21 +1,21 @@
 #pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>//负责创建opengl的窗口
-
-
 #include <memory>
 
-#include "../Core/Window.hpp"
+
+
 #include "AssetManager.hpp"
+#include "../Core/Window.hpp"
+#include "../Core/LoaderManager.hpp"
 
 
 void RenderLoop() 
 {
-	AssetManager::Get()->ReloadAssets();
-
 	glClearColor(1, 1, 1, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	LoaderManager::Get()->UpdateAssetFromDisk();
 }
 
 
