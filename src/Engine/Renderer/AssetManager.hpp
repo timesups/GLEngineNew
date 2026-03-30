@@ -38,7 +38,9 @@ public:
 	}
 	void LoadModel(const std::string& path) 
 	{
-
+		std::shared_ptr<Model> model = std::make_shared<Model>();
+		LoaderManager::Get()->LoadModel(path, model);
+		m_models[model->m_name] = model;
 	}
 private:
 	static AssetManager* instance;

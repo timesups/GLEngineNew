@@ -282,7 +282,7 @@ public:
 	}
 	bool LoadModel(const std::string& path, std::shared_ptr<Model> model) 
 	{
-		currentModel = std::make_shared<Model>();
+		currentModel = model;
 		currentModel->m_name = path.substr(path.find_last_of("/") + 1);
 		currentModel->m_path = path;
 
@@ -292,9 +292,10 @@ public:
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
 			std::cout << "ERROR:ASSIMP::" << importer.GetErrorString() << std::endl;
-			return;
+			return false;
 		}
 		ProcessNode(scene->mRootNode, scene);
+		return true;	
 	}
 private:
 	void ProcessNode(aiNode* node, const aiScene* scene)
@@ -312,11 +313,9 @@ private:
 	}
 	void ProcessMesh(aiMesh* mesh, const aiScene* scene) 
 	{
-		std::unique_ptr<Mesh> out_mesh = std::make_unique<Mesh>();
-		std::unique_ptr<Material> out_mat = std::make_unique<Material>();
+		std::shared_ptr<Mesh> out_mesh = std::make_unique<Mesh>();
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
-
 		//顶点信息
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 		{
@@ -370,18 +369,9 @@ private:
 			}
 		}
 		out_mesh->Create(vertices, indices);
-
+		out_mesh->m_name = mesh->mName.C_Str();
 		//材质贴图
-		if (mesh->mMaterialIndex >= 0)
-		{
-			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-			std::vector<Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-			textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-			std::vector<Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-		}
-
-		currentModel->AddSection(out_mesh,);
+		currentModel->AddSection(out_mesh);
 	}
 	std::string ReadAndPerprocessShaderFile(const std::string& path)
 	{

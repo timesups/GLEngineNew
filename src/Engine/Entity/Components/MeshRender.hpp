@@ -3,7 +3,6 @@
 #include "Component.hpp"
 
 
-
 class MeshRender :public Component 
 {
 	
@@ -13,6 +12,7 @@ public:
 	{
 
 	}
+private:
 
 
 };

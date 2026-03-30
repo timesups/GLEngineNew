@@ -16,11 +16,16 @@ class Model
 {
 public:
 	Model() = default;
-	void AddSection(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> mat,const std::string name)
+	void AddSection(std::shared_ptr<Mesh> mesh)
 	{
 		MeshSection section;
 		section.mesh = mesh;
 		section.materialIndex = m_materials.size();
+		section.name = mesh->m_name;
+		m_meshSections.push_back(section);
+	}
+	void addMaterial(std::shared_ptr<Material> mat) 
+	{
 		m_materials.push_back(mat);
 	}
 public:

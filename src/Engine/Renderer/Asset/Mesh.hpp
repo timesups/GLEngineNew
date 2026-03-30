@@ -1,6 +1,8 @@
 #pragma once
 #include <glad/glad.h>
 #include <vector>
+#include <glm/glm.hpp>
+#include <string>
 
 
 struct Vertex
@@ -22,8 +24,7 @@ public:
 		if (m_vbo) glDeleteBuffers(1, &m_vbo);
 		if (m_ebo) glDeleteBuffers(1, &m_ebo);
 	}
-
-	bool Create(const std::vector<Vertex>& vertices,
+	void Create(const std::vector<Vertex>& vertices,
 		const std::vector<unsigned int>& indices) 
 	{
 		m_vertexCount = vertices.size();
@@ -70,6 +71,8 @@ public:
 	}
 	size_t GetVertexCount()const { return m_vertexCount;}
 	size_t GetIndexCount() const { return m_indexCount; }
+public:
+	std::string m_name;
 private:
 	unsigned int m_vao = 0;
 	unsigned int m_vbo = 0;
