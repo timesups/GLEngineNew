@@ -24,10 +24,11 @@
     <ClInclude Include="src\Engine\Renderer\Asset\Material.hpp" />
     <ClInclude Include="src\Engine\Renderer\RenderContext.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\FrameBuffer.hpp" />
-    <ClInclude Include="src\Engine\Renderer\Asset\Model.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\Mesh.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\Shader.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\Texture.hpp" />
     <ClInclude Include="src\Engine\Renderer\AssetManager.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\ShaderPass.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\Model.hpp" />
   </ItemGroup>
 </Project>

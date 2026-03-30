@@ -157,6 +157,7 @@
     <ClInclude Include="src\Engine\Core\Input.hpp" />
     <ClInclude Include="src\Engine\Core\Log.hpp" />
     <ClInclude Include="src\Engine\Core\Window.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Asset\Mesh.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\Model.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\Shader.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\ShaderPass.hpp" />
