@@ -1,11 +1,14 @@
 #pragma once
 #include <memory>
-#include <variant>
+#include <string>
 #include <unordered_map>
+#include <variant>
 
-#include "Model.hpp"
+#include <glm/glm.hpp>
+
 #include "Shader.hpp"
 #include "Texture.hpp"
+
 
 enum class MaterialPropertyType
 {
@@ -42,6 +45,12 @@ struct MaterialProperty
 	bool isDirty = true;
 };
 
+struct MeshSection {
+	std::shared_ptr<Mesh> mesh;
+	int materialIndex; // 指向材质数组的索引
+	std::string name;
+};
+
 
 class Material 
 {
@@ -60,8 +69,9 @@ public:
 				section.mesh->Draw();
 		}
 	}
-private:
+public:
 	std::string m_name;
+private:
 	std::shared_ptr<Shader> m_shader;
 	std::unordered_map<std::string, MaterialProperty> m_properties;
 

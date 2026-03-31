@@ -12,7 +12,7 @@ layout (location = 4) in vec2 aTexcoord0;
 
 
 
-layout(std140) uniform DataInputs
+layout(std140,binding=0) uniform camera_buffer
 {
     mat4 GL_MATRIX_V;
     mat4 GL_MATRIX_P;

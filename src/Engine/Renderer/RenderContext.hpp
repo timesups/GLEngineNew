@@ -1,22 +1,15 @@
 #pragma once
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>//���𴴽�opengl�Ĵ���
 #include <memory>
 
 
-#include "AssetManager.hpp"
-#include "../Core/Window.hpp"
-#include "../Core/LoaderManager.hpp"
-
-
-
+class Entity;
+// 每帧由 Window::Run 在调用 renderCallback 前更新
 class RenderContext
 {
 public:
-	RenderContext() = default;
+	float deltaTime = 0.f;
+	int width = 0;
+	int height = 0;
+	std::shared_ptr<Entity> currentCamera;
 
-private:
 };
-
-
-

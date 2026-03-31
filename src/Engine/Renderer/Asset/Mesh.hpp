@@ -14,6 +14,9 @@ struct Vertex
 	glm::vec2 Texcoord;
 };
 
+
+
+
 class Mesh 
 {
 public:

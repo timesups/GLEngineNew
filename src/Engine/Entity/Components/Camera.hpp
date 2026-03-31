@@ -63,6 +63,15 @@ public:
 
 	}
 
+	float GetNear()const
+	{
+		return m_near;
+	}
+	float GetFar()const
+	{
+		return  m_far;
+	}
+
 private:
 	void UpdateViewMatrix() 
 	{

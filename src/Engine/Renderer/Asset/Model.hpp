@@ -1,15 +1,8 @@
 #pragma once
 
-
 #include "Mesh.hpp"
 #include "Material.hpp"
 
-
-struct MeshSection {
-	std::shared_ptr<Mesh> mesh;
-	int materialIndex; // 指向材质数组的索引
-	std::string name;
-};
 
 class Model 
 {

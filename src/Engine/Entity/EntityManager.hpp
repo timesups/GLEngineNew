@@ -76,6 +76,11 @@ public:
 		for (auto& e : m_entities)
 			e->Update(deltaTime);
 	}
+	void Render()
+	{
+		for (auto& e : m_entities)
+			e->Render();
+	}
 	void Clear()
 	{
 		m_entities.clear();

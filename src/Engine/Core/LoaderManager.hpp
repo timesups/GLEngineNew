@@ -153,6 +153,13 @@ public:
 
 	bool LoadShader(const std::string& path, std::shared_ptr<Shader> shader)
 	{
+
+		//检查路径是否已经加载
+		if (m_shaderFiles.find(path) != m_shaderFiles.end())
+		{
+			shader = m_shaderFiles[path].relativeAsset[0];
+			return true;
+		}
 		Log(MODULE, LogLevel::INFO, "Loading shader from path:{}", path);
 		shader->m_name = path.substr(path.find_last_of("/") + 1,path.find_last_of(".") - path.find_last_of("/")-1);
 		shader->m_path = path;

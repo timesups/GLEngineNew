@@ -1,10 +1,10 @@
 #pragma once
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>//锟斤拷锟金创斤拷opengl锟侥达拷锟斤拷
+#include <GLFW/glfw3.h>  // Window, input, and OpenGL context creation
 #include <functional>
 
 #include "../Core/Log.hpp"
-
+#include "../Renderer/RenderContext.hpp"
 
 #define MODULE "Window"
 
@@ -56,14 +56,14 @@ void scroll_callback(GLFWwindow* window, double xoffse, double yoffset)
 
 
 
-using RenderPipelineCallback = std::function<void()>;
+using RenderPipelineCallback = std::function<void(RenderContext&)>;
 
 class Window 
 {
 public:
 	Window()
 	{
-		//初始化GLFW
+		// Init GLFW
 		glfwInit();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -96,30 +96,34 @@ public:
 
 		glViewport(0, 0, vWidth, vHeight);
 
-		//锟斤拷锟斤拷锟矫伙拷指锟斤拷
+		// Store Window* in GLFW user pointer for static callbacks
 		glfwSetWindowUserPointer(win, this);
-		//一些锟截碉拷锟斤拷锟斤拷
+		// Register GLFW callbacks
 		glfwSetFramebufferSizeCallback(win, framebuffer_size_callback);
 		glfwSetCursorPosCallback(win, mouse_callback);
 		glfwSetScrollCallback(win, scroll_callback);
 
-		//锟斤拷锟斤拷锟斤拷锟斤拷锟绞�
+		// Capture and hide cursor (typical for FPS-style camera)
 		glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	}
-	void Run() 
+	void Run(RenderContext& context)
 	{
+		float lastTime = static_cast<float>(glfwGetTime());
 		while (!glfwWindowShouldClose(win))
 		{
+			const float now = static_cast<float>(glfwGetTime());
+			deltaTime = now - lastTime;
+			lastTime = now;
+
+			context.deltaTime = deltaTime;
+			context.width = vWidth;
+			context.height = vHeight;
+
 			processInput(win);
 
-			if (renderCallback) 
-			{
-				renderCallback();
-			}
-
-
-
+			if (renderCallback)
+				renderCallback(context);
 
 			glfwSwapBuffers(win);
 			glfwPollEvents();
@@ -127,8 +131,9 @@ public:
 	}
 
 public:
-	int vWidth;
-	int vHeight;
+	int vWidth = 0;
+	int vHeight = 0;
+	float deltaTime = 0.f;
 	RenderPipelineCallback renderCallback;
 private:
 	GLFWwindow* win = nullptr;

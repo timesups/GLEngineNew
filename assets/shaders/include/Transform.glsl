@@ -10,7 +10,7 @@ vec4 ObjectToClipPos(vec3 pos)
 
 vec3 ObjectToWorldNormal(vec3 normal)
 {
-    return(normalize(mat3(transpose(inverse(GL_MATRIX_M))) * aNormal));
+    return(normalize(mat3(GL_MATRIX_N) * aNormal));
 }
 
 vec3 ObjectToWorldDir(vec3 dir)

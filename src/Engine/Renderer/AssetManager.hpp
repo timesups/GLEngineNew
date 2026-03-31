@@ -67,7 +67,7 @@ private:
 	AssetManager() 
 	{
 		//加载一些默认材质
-		m_defaultMaterial = CreateMaterial("DefaultMaterial", LoadShader("Assets/Shaders/DefaultShader.glsl"));
+		m_defaultMaterial = CreateMaterial("DefaultMaterial", LoadShader("assets/shaders/DefaultShader.glsl"));
 
 	};
 private:
