@@ -1,6 +1,9 @@
 #pragma once
+#include <memory>
 #include <variant>
+#include <unordered_map>
 
+#include "Model.hpp"
 #include "Shader.hpp"
 #include "Texture.hpp"
 
@@ -44,6 +47,19 @@ class Material
 {
 public:
 	Material(std::shared_ptr<Shader> shader):m_shader(shader) {}
+	void Apply(MeshSection& section,const glm::mat4& mModel,const glm::mat4& mNormal) const 
+	{
+		for(auto& pass:m_shader->m_passes)
+		{
+				pass->use();
+				//设置矩阵信息
+				pass->SetValue("GL_MATRIX_M",mModel);
+				pass->SetValue("GL_MATRIX_N",mNormal);
+				//批量设置参数
+				
+				section.mesh->Draw();
+		}
+	}
 private:
 	std::string m_name;
 	std::shared_ptr<Shader> m_shader;

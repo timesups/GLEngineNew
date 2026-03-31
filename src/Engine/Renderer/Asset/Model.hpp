@@ -1,14 +1,13 @@
 #pragma once
 
 
-
 #include "Mesh.hpp"
 #include "Material.hpp"
 
 
 struct MeshSection {
 	std::shared_ptr<Mesh> mesh;
-	int materialIndex;  // Ö¸Ïò²ÄÖÊÊý×éµÄË÷Òý
+	int materialIndex; // æŒ‡å‘æè´¨æ•°ç»„çš„ç´¢å¼•
 	std::string name;
 };
 
@@ -20,7 +19,7 @@ public:
 	{
 		MeshSection section;
 		section.mesh = mesh;
-		section.materialIndex = m_materials.size();
+		section.materialIndex = m_meshSections.size();
 		section.name = mesh->m_name;
 		m_meshSections.push_back(section);
 	}
@@ -31,7 +30,6 @@ public:
 public:
 	std::string m_name;
 	std::string m_path;
-private:
 	std::vector<MeshSection> m_meshSections;
 	std::vector<std::shared_ptr<Material>> m_materials;
 };

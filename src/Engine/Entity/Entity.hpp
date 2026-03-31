@@ -3,6 +3,9 @@
 #include <algorithm>
 #include <typeindex>
 #include <memory>
+#include <string>
+
+
 
 #include "Components/Component.hpp"
 
@@ -59,7 +62,7 @@ public:
 	template<typename T>
 	bool HasComponent()
 	{
-		return m_components.find(typeid(T) != m_components.end());
+		return m_components.find(typeid(T)) != m_components.end();
 	}
 
 	void Init() 
@@ -84,6 +87,8 @@ public:
 			component->Render();
 		}
 	}
+public:
+	std::string m_name;
 private:
 	std::unordered_map<std::type_index, std::unique_ptr<Component>> m_components;
 };

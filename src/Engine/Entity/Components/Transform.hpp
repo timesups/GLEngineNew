@@ -3,13 +3,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Component.hpp"
+#include "glm/matrix.hpp"
+
 
 class Transform : public Component
 {
 public:
 	Transform() = default;
 
-	//»ñÈ¡ÊôÐÔ
+	//ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
 	const glm::vec3& GetPosition() const 
 	{
 		return Position;
@@ -34,7 +36,7 @@ public:
 	{
 		return glm::normalize(glm::cross(FrontVector, UpVector));
 	}
-	//ÉèÖÃÊôÐÔ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void SetPosition(const glm::vec3& value) 
 	{
 		Position = value;
@@ -53,6 +55,10 @@ public:
 	const glm::mat4& GetModelMatrix()const 
 	{
 		return mModel;
+	}
+	const glm::mat4 GetNormalMatrix()const
+	{
+		return glm::transpose(glm::inverse(glm::mat4(glm::mat3(mModel))));		
 	}
 private:
 	void UpdateMatrix() 

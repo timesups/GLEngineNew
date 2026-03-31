@@ -22,5 +22,6 @@ layout(std140) uniform DataInputs
 };
 
 uniform mat4 GL_MATRIX_M;
+uniform mat4 GL_MATRIX_N;
 
 #endif
