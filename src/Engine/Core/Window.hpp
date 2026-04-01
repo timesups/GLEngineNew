@@ -29,8 +29,9 @@ public:
 	}
 	~Window()
 	{
+		//清理资源
+		if(win) glfwDestroyWindow(win);
 		glfwTerminate();
-		glfwDestroyWindow(win);
 	}
 	bool Create(const int w, const int h, const char* title)
 	{

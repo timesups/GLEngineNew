@@ -21,14 +21,14 @@ public:
     void Render(RenderContext& context)
     {
         //更新着色器
-        LoaderManager::Get()->UpdateAssetFromDisk();
+        LoaderManager::Get().UpdateAssetFromDisk();
 
 
         glEnable(GL_DEPTH_TEST);
         glClearColor(0,0,0,0);
         glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-        EntityManager::Get()->Update(context.deltaTime);
+        EntityManager::Get().Update(context.deltaTime);
         //传递数据
         auto cam = context.currentCamera->GetComponent<Camera>();
         cam->SetAspect((float)context.width / context.height);
@@ -40,7 +40,7 @@ public:
         cameraBuffer.UploadStruct(data);
 
 
-        EntityManager::Get()->Render();
+        EntityManager::Get().Render();
 
     }
 private:

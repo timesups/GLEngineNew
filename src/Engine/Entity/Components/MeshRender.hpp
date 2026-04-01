@@ -6,7 +6,7 @@
 #include "Component.hpp"
 #include "Transform.hpp"
 #include "../Entity.hpp"
-
+#include "../../Renderer/AssetManager.hpp"
 
 
 
@@ -38,9 +38,13 @@ public:
 			{
 				mat = m_materialOverride[section.materialIndex];
 			}
-			else 
+			else if(section.materialIndex < m_model->m_materials.size())
 			{
 				mat = m_model->m_materials[section.materialIndex];
+			}
+			else
+			{
+				mat = AssetManager::Get().GetAsset<Material>("DefaultMaterial");
 			}
 			Transform* transform = GetEntity()->GetComponent<Transform>();
 			if(transform)
@@ -62,6 +66,5 @@ public:
 private:
 	std::shared_ptr<Model> m_model;
 	std::vector<std::shared_ptr<Material>> m_materialOverride;
-
 };
 

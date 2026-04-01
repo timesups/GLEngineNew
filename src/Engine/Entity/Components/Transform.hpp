@@ -3,7 +3,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Component.hpp"
-#include "glm/detail/qualifier.hpp"
 #include "glm/ext/vector_float3.hpp"
 #include "glm/matrix.hpp"
 
@@ -12,7 +11,53 @@ class Transform : public Component
 {
 public:
 	Transform() = default;
+	//Set
+	void SetPosition(const glm::vec3& value) 
+	{
+		m_position = value;
+		UpdateMatrix();
+	}
+	void SetRotation(const glm::vec3& value)
+	{
+		m_rotation = value;
+		UpdateMatrix();
+	}	
+	void SetScale(const glm::vec3& value)
+	{
+		m_scale = value;
+		UpdateMatrix();
+	}
+	//Add
+	void AddPosition(float x,float y,float z)
+	{
+		m_position += glm::vec3(x,y,z);
+		UpdateMatrix();
+	}
+	void AddPosition(const glm::vec3& value)
+	{
+		m_position += value;
+		UpdateMatrix();
+	}
+	void AddRotation(float x,float y,float z)
+	{
+		m_rotation += glm::vec3(x,y,z);
+		UpdateMatrix();
+	}
+	void AddRotation(const glm::vec3& value)
+	{
+		m_rotation += value;
+		UpdateMatrix();
+	}
 
+	//Get
+	const glm::mat4& GetModelMatrix()const 
+	{
+		return mModel;
+	}
+	const glm::mat4 GetNormalMatrix()const
+	{
+		return glm::transpose(glm::inverse(glm::mat4(glm::mat3(mModel))));		
+	}
 	//��ȡ����
 	const glm::vec3& GetPosition() const 
 	{
@@ -38,7 +83,6 @@ public:
 	{
 		return glm::normalize(glm::cross(m_frontVector, m_upVector));
 	}
-
 	/// 自由相机：rotation.x 俯仰、rotation.y 偏航（度），与 GetViewForward 一致
 	glm::vec3 GetViewForward() const
 	{
@@ -62,46 +106,6 @@ public:
 	glm::vec3 GetViewUp() const
 	{
 		return glm::normalize(glm::cross(GetViewRight(), GetViewForward()));
-	}
-	//��������
-	void SetPosition(const glm::vec3& value) 
-	{
-		m_position = value;
-		UpdateMatrix();
-	}
-	void SetRotation(const glm::vec3& value)
-	{
-		m_rotation = value;
-		UpdateMatrix();
-	}	
-	void SetScale(const glm::vec3& value)
-	{
-		m_scale = value;
-		UpdateMatrix();
-	}
-	const glm::mat4& GetModelMatrix()const 
-	{
-		return mModel;
-	}
-	const glm::mat4 GetNormalMatrix()const
-	{
-		return glm::transpose(glm::inverse(glm::mat4(glm::mat3(mModel))));		
-	}
-	void AddPosition(float x,float y,float z)
-	{
-		m_position += glm::vec3(x,y,z);
-	}
-	void AddPosition(const glm::vec3& value)
-	{
-		m_position += value;
-	}
-	void AddRotation(float x,float y,float z)
-	{
-		m_rotation += glm::vec3(x,y,z);
-	}
-	void AddRotation(const glm::vec3& value)
-	{
-		m_rotation += value;
 	}
 private:
 	void UpdateMatrix() 

@@ -12,13 +12,16 @@
 class EntityManager
 {
 public:
-	~EntityManager() {}
-	static EntityManager* Get() 
+	static EntityManager& Get() 
 	{
-		if (!instance)
-			instance = new EntityManager();
+		static EntityManager instance;
 		return instance;
 	}
+	~EntityManager() = default;
+	//½ûÖ¹¿½±´
+	EntityManager(const EntityManager&) = delete;
+	EntityManager& operator=(const EntityManager&) = delete;
+
 	std::shared_ptr<Entity> CreateEntity(const std::string& name)
 	{
 		auto entity = std::make_shared<Entity>();
@@ -45,7 +48,7 @@ public:
 
 	std::shared_ptr<Entity> CreateMeshRenderEntity(const std::string& name, const std::string& modelPath)
 	{
-		return CreateMeshRenderEntity(name, AssetManager::Get()->LoadModel(modelPath));
+		return CreateMeshRenderEntity(name, AssetManager::Get().LoadModel(modelPath));
 	}
 
 	void DestroyEntity(Entity* entity)
@@ -88,8 +91,6 @@ public:
 	const std::vector<std::shared_ptr<Entity>>& GetEntities() const { return m_entities; }
 	size_t GetEntityCount() const { return m_entities.size(); }
 private:
-	static EntityManager* instance;
 	EntityManager() = default;
 	std::vector<std::shared_ptr<Entity>> m_entities;
 };
-EntityManager* EntityManager::instance = nullptr;

@@ -10,7 +10,7 @@ class Texture
 public:
 	Texture() :m_width(0), m_height(0), m_channels(0) 
 	{
-		glGenTextures(GL_TEXTURE_2D, &m_id);
+		glGenTextures(1, &m_id);
 	}
 	~Texture() {if (m_id) glDeleteTextures(1, &m_id);}//清理资源
 	bool CreateFromData(unsigned char* data, int width, int height, int channels) 

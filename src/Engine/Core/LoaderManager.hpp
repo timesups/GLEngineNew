@@ -6,7 +6,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-
+#include <sys/stat.h>
 
 #include "../../../external/stb/stb_image.h"
 #include "../Renderer/Asset/Texture.hpp"
@@ -92,21 +92,17 @@ struct FileState
 class LoaderManager
 {
 public:
-	static LoaderManager* Get()
+	static LoaderManager& Get()
 	{
-		if (!instance)
-			instance = new LoaderManager();
+		static LoaderManager instance;
 		return instance;
 	}
+	~LoaderManager() = default;
 
-	~LoaderManager() 
-	{
-		if (instance) 
-		{
-			delete instance;
-			instance = nullptr;
-		}
-	}
+	//禁止拷贝
+	LoaderManager(const LoaderManager&) = delete;
+	LoaderManager& operator=(const LoaderManager&) = delete;
+
 public:
 	void UpdateAssetFromDisk() 
 	{
@@ -121,7 +117,7 @@ public:
 			}
 		}
 	}
-	bool LoadTextureFromFile(const std::string &path, std::shared_ptr<Texture> tex)
+	bool LoadTextureFromFile(const std::string& path, std::shared_ptr<Texture>& tex)
 	{
 		//检查路径是否已经加载
 		if (m_TextureFiles.find(path)!=m_TextureFiles.end())
@@ -150,8 +146,7 @@ public:
 		m_TextureFiles[path] = file;
 		return true;
 	}
-
-	bool LoadShader(const std::string& path, std::shared_ptr<Shader> shader)
+	bool LoadShader(const std::string& path, std::shared_ptr<Shader>& shader)
 	{
 
 		//检查路径是否已经加载
@@ -290,7 +285,7 @@ public:
 		shader->CompileShaderFromCode(codes, options);
 		return true;
 	}
-	bool LoadModel(const std::string& path, std::shared_ptr<Model> model) 
+	bool LoadModel(const std::string& path, std::shared_ptr<Model>& model) 
 	{
 		currentModel = model;
 		currentModel->m_name = path.substr(path.find_last_of("/") + 1, path.find_last_of(".") - path.find_last_of("/") - 1);
@@ -298,7 +293,7 @@ public:
 
 		Assimp::Importer importer;
 		//如果没有顶点的法线模型处理中，我们会为模型生成法线和UV坐标
-		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs|aiProcess_GenNormals);
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 		{
 			std::cout << "ERROR:ASSIMP::" << importer.GetErrorString() << std::endl;
@@ -426,7 +421,6 @@ private:
 		return shaderCode;
 	}
 private:
-	static LoaderManager* instance;
 	LoaderManager() 
 	{
 		//初始化一些文件相关的函数
@@ -439,4 +433,3 @@ private:
 	std::shared_ptr<Model> currentModel;
 };
 
-LoaderManager* LoaderManager::instance = nullptr;

@@ -10,7 +10,7 @@ enum class LogLevel
     ERROR,
 };
 
-// �����汾
+
 void Log(const char* module, LogLevel level, std::string_view text)
 {
     const char* levelStr = "";
@@ -24,7 +24,7 @@ void Log(const char* module, LogLevel level, std::string_view text)
     std::cout << "[" << module << "] [" << levelStr << "] " << text << std::endl;
 }
 
-// �ɱ�����汾 - ʹ�� std::format
+
 template<typename... Args>
 void Log(const char* module, LogLevel level, std::string_view format, Args&&... args)
 {
