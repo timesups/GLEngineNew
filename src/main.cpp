@@ -28,7 +28,7 @@ int main()
 	std::shared_ptr<Entity> cam = EntityManager::Get()->CreateCameraEntity("MainCamera");
 	cam->GetComponent<Transform>()->SetPosition(glm::vec3(0,0,3));
 	context.currentCamera = cam;
-	EntityManager::Get()->CreateMeshRenderEntity("Model", "assets/models/Sphere.fbx");
+	EntityManager::Get()->CreateMeshRenderEntity("Model", "assets/models/Cube.fbx");
 
 	//初始化所有Entity
 	EntityManager::Get()->Init();

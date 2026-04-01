@@ -62,6 +62,11 @@ public:
 		return m_transform ? m_transform->GetRightVector() : glm::vec3(1.0,0.0,0.0);
 
 	}
+	void SetAspect(float aspect) 
+	{
+		m_aspect = aspect;
+		UpdateProjectionMatrix();
+	}
 
 	float GetNear()const
 	{
@@ -72,6 +77,14 @@ public:
 		return  m_far;
 	}
 
+	float GetFov() const 
+	{
+		return m_fov;
+	}
+	void SetFov(float fov) 
+	{
+		m_fov = fov;
+	}
 private:
 	void UpdateViewMatrix() 
 	{

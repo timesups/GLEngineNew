@@ -5,6 +5,8 @@
 
 #include "../Core/Log.hpp"
 #include "../Renderer/RenderContext.hpp"
+#include "../Entity/Entity.hpp"
+#include "../Entity/Components/Camera.hpp"
 
 #define MODULE "Window"
 
@@ -14,6 +16,11 @@ void processInput(GLFWwindow* window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+
+	RenderContext* context = static_cast<RenderContext*>(glfwGetWindowUserPointer(window));
+	auto cam = context->currentCamera->GetComponent<Camera>();
+
 
 	//if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	//	cam.Move(deltaTime, MOVEDIRECTION::FORWARD);
@@ -51,9 +58,10 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 void scroll_callback(GLFWwindow* window, double xoffse, double yoffset)
 {
-	//cam.SetFov(cam.GetFov() + yoffset * 0.1f);
+	RenderContext* context = static_cast<RenderContext*>(glfwGetWindowUserPointer(window));
+	auto cam = context->currentCamera->GetComponent<Camera>();
+	cam->SetFov(cam->GetFov() + yoffset * 0.1f);
 }
-
 
 
 using RenderPipelineCallback = std::function<void(RenderContext&)>;
@@ -104,12 +112,14 @@ public:
 		glfwSetScrollCallback(win, scroll_callback);
 
 		// Capture and hide cursor (typical for FPS-style camera)
-		glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		//glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	}
 	void Run(RenderContext& context)
 	{
 		float lastTime = static_cast<float>(glfwGetTime());
+		//将渲染上下文设置到窗口中
+		glfwSetWindowUserPointer(win, &context);
 		while (!glfwWindowShouldClose(win))
 		{
 			const float now = static_cast<float>(glfwGetTime());
