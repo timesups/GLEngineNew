@@ -1,7 +1,7 @@
 #pragma once
 #include <glad/glad.h>
 
-#include "../../Core/Log.hpp"
+#include "../../Core/Log.h"
 
 #define MODULE "Texture"
 
@@ -12,7 +12,7 @@ public:
 	{
 		glGenTextures(1, &m_id);
 	}
-	~Texture() {if (m_id) glDeleteTextures(1, &m_id);}//ÇåÀí×ÊÔ´
+	~Texture() {if (m_id) glDeleteTextures(1, &m_id);}//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´
 	bool CreateFromData(unsigned char* data, int width, int height, int channels) 
 	{
 		glBindTexture(GL_TEXTURE_2D, m_id);
@@ -27,6 +27,7 @@ public:
 		if (channels > 3) format = GL_RGBA;	
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		return true;
 	}
 	bool CreateFromEmpty(int width, int height, int channels) 
 	{
@@ -42,6 +43,7 @@ public:
 		if (channels > 3) format = GL_RGBA;
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, NULL);
 		glBindTexture(GL_TEXTURE_2D, 0);
+		return true;
 	}
 	void Bind(unsigned int uint = 0)  
 	{

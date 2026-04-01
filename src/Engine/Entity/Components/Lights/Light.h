@@ -1,4 +1,4 @@
-#include "../Component.hpp"
+#include "../Component.h"
 
 
 
