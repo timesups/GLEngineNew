@@ -26,9 +26,10 @@ int main()
 	AssetManager::Get()->LoadShader("assets/shaders/DefaultShader.glsl");
 	//准备场景
 	std::shared_ptr<Entity> cam = EntityManager::Get()->CreateCameraEntity("MainCamera");
-	cam->GetComponent<Transform>()->SetPosition(glm::vec3(0,0,3));
+	cam->GetComponent<Transform>()->SetPosition(glm::vec3(0,0,5));
 	context.currentCamera = cam;
-	EntityManager::Get()->CreateMeshRenderEntity("Model", "assets/models/Cube.fbx");
+	auto model = EntityManager::Get()->CreateMeshRenderEntity("Model", "assets/models/Cube.fbx");
+	model->GetComponent<Transform>()->SetRotation(glm::vec3(0.0, 45.0, 0.0));
 
 	//初始化所有Entity
 	EntityManager::Get()->Init();

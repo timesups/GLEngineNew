@@ -9,7 +9,6 @@
     <ClInclude Include="src\Engine\Core\Window.hpp" />
     <ClInclude Include="external\stb\stb_image.h" />
     <ClInclude Include="src\Engine\Core\Log.hpp" />
-    <ClInclude Include="src\Engine\Core\Input.hpp" />
     <ClInclude Include="src\Engine\Resources\Loaders\ModelLoader.hpp" />
     <ClInclude Include="src\Engine\Resources\Loaders\ShaderLoader.hpp" />
     <ClInclude Include="src\Engine\Resources\Loaders\TextureLoader.hpp" />
@@ -31,5 +30,11 @@
     <ClInclude Include="src\Engine\Renderer\AssetManager.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\ShaderPass.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\Model.hpp" />
+    <ClInclude Include="src\Engine\Renderer\Renderer.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Lights\AreaLight.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Lights\DirectionalLight.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Lights\Light.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Lights\PointLight.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Lights\SpotLight.hpp" />
   </ItemGroup>
 </Project>

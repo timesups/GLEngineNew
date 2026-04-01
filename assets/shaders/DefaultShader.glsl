@@ -15,6 +15,9 @@ GLSLShader
             GLSLPROGRAM
             #include "/include/Core.glsl"
             #include "/include/Light.glsl"
+
+            
+
             #ifdef VERTEX
             void main()
             {

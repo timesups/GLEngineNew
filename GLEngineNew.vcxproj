@@ -151,10 +151,14 @@
   <ItemGroup>
     <ClInclude Include="external\stb\stb_image.h" />
     <ClInclude Include="src\Engine\Core\LoaderManager.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Lights\AreaLight.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Lights\DirectionalLight.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Lights\Light.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Lights\PointLight.hpp" />
+    <ClInclude Include="src\Engine\Entity\Components\Lights\SpotLight.hpp" />
     <ClInclude Include="src\Engine\Renderer\AssetManager.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\FrameBuffer.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\Material.hpp" />
-    <ClInclude Include="src\Engine\Core\Input.hpp" />
     <ClInclude Include="src\Engine\Core\Log.hpp" />
     <ClInclude Include="src\Engine\Core\Window.hpp" />
     <ClInclude Include="src\Engine\Renderer\Asset\Mesh.hpp" />
