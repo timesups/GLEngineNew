@@ -31,7 +31,7 @@ public:
 		const std::vector<unsigned int>& indices) 
 	{
 		m_vertexCount = vertices.size();
-		m_indexCount = vertices.size();
+		m_indexCount = indices.size();
 		glGenVertexArrays(1, &m_vao);
 		glBindVertexArray(m_vao);
 
