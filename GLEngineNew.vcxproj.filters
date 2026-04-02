@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <ClCompile Include="external\imgui\imgui.cpp">
+      <Filter>external\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="external\imgui\imgui_draw.cpp">
+      <Filter>external\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="external\imgui\imgui_tables.cpp">
+      <Filter>external\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="external\imgui\imgui_widgets.cpp">
+      <Filter>external\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="external\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>external\imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="external\imgui\backends\imgui_impl_opengl3.cpp">
+      <Filter>external\imgui\backends</Filter>
+    </ClCompile>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="external\glad\glad.c" />
     <ClCompile Include="external\stb\stb_image.cpp" />
@@ -43,5 +61,13 @@
     <ClInclude Include="src\Engine\Entity\Components\Lights\Light.h" />
     <ClInclude Include="src\Engine\Entity\Components\Lights\PointLight.h" />
     <ClInclude Include="src\Engine\Entity\Components\Lights\SpotLight.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="external\imgui">
+      <UniqueIdentifier>{8f4c2a1e-9b3d-4e7f-a6c1-2d8e5f0a3b4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\imgui\backends">
+      <UniqueIdentifier>{9d5d3b2f-0c4e-5f8a-b7d2-3e9f6a1b4c5d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

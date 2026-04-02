@@ -21,20 +21,56 @@ enum class CullMode
 {
 	BACK = GL_BACK,
 	FRONT = GL_FRONT,
-	OFF = 0,
+	OFF = -1,
 };
 
 
-enum class ZTEST 
+// 与 glDepthFunc / glStencilFunc 的比较方式一致：深度为片段深度与深度缓冲比较，模板为 ref 与模板缓冲比较。
+enum class Func
 {
-	ALWAYS = GL_ALWAYS,     //��Զͨ����Ȳ���  ���ڹر���Ȳ���
-	NEVER = GL_NEVER,       //��Զ��ͨ����Ȳ���
-	LESS = GL_LESS,         //Ƭ�����ֵС����Ȼ���ʱͨ������
-	EQUAL = GL_EQUAL,       //Ƭ�����ֵ������Ȼ���ʱͨ������
-	LEQUAL = GL_LEQUAL,     //Ƭ�����ֵС�ڵ�����Ȼ���ʱͨ������
-	GREATER = GL_GREATER,   //Ƭ�����ֵ������Ȼ���ʱͨ������
-	NOTEQUAL = GL_NOTEQUAL, //Ƭ�����ֵ��������Ȼ���ʱͨ������
-	GEQUAL = GL_GEQUAL,     //Ƭ�����ֵ���ڵ�����Ȼ���ʱͨ������
+	ALWAYS = GL_ALWAYS,     // 始终通过比较
+	NEVER = GL_NEVER,       // 始终不通过比较
+	LESS = GL_LESS,         // 小于时通过（深度：片段深度 < 缓冲值；模板：ref < 缓冲值）
+	EQUAL = GL_EQUAL,       // 相等时通过
+	LEQUAL = GL_LEQUAL,     // 小于等于时通过
+	GREATER = GL_GREATER,   // 大于时通过
+	NOTEQUAL = GL_NOTEQUAL, // 不相等时通过
+	GEQUAL = GL_GEQUAL,     // 大于等于时通过
+};
+
+enum class BlendFunc 
+{
+	ZERO                      =  GL_ZERO,
+	ONE                       =  GL_ONE,
+	SRC_COLOR                 =  GL_SRC_COLOR,
+	ONE_MINUS_SRC_COLOR       =  GL_ONE_MINUS_SRC_COLOR,
+	DST_COLOR                 =  GL_DST_COLOR,
+	ONE_MINUS_DST_COLOR       =  GL_ONE_MINUS_DST_COLOR,
+	SRC_ALPHA                 =  GL_SRC_ALPHA,
+	ONE_MINUS_SRC_ALPHA       =  GL_ONE_MINUS_SRC_ALPHA,
+	DST_ALPHA                 =  GL_DST_ALPHA,
+	ONE_MINUS_DST_ALPHA       =  GL_ONE_MINUS_DST_ALPHA,
+};
+
+enum class BlendEq
+{
+	ADD = GL_FUNC_ADD,
+	SUBTRACT = GL_FUNC_SUBTRACT,
+	REVERSE_SUBTRACT = GL_FUNC_REVERSE_SUBTRACT,
+	MIN = GL_MIN,
+	MAX = GL_MAX,
+};
+
+enum class StencilOp
+{
+	KEEP = GL_KEEP,           //保持当前
+	ZERO = GL_ZERO,           //将模板设置为0
+	REPLACE = GL_REPLACE,     //将模板值设置为glStencilFunc函数设置的ref值
+	INCR = GL_INCR,           //如果模板值小于最大值则将模板值加1
+	INCR_WRAP = GL_INCR_WRAP, //
+	DECR = GL_DECR,
+	DECR_WRAP = GL_DECR_WRAP,
+	INVERT = GL_INVERT,
 };
 
 struct PassCode
@@ -48,9 +84,26 @@ struct PassCode
 
 struct PassOption
 {
-	ZTEST zTest = ZTEST::LESS;
+	//深度测试
+	Func zTest = Func::LESS;
 	bool ZWrite = true;
+
+	//面剔除
 	CullMode cullMode = CullMode::OFF;
+
+	//模板测试
+	int StencilMask = 0;
+	Func StencilFunc = Func::ALWAYS;
+	int Stencilref = 1;
+	StencilOp stencilFail = StencilOp::KEEP;//模板测试失败
+	StencilOp stencilDpFail = StencilOp::KEEP;//模板通过,深度失败
+	StencilOp stencilDpPass = StencilOp::KEEP;//模板深度都通过
+	
+	//混合
+	bool enableBlend = false;
+	BlendFunc sFactor = BlendFunc::ZERO;
+	BlendFunc dFactor = BlendFunc::ZERO;
+	BlendEq blendEq = BlendEq::ADD;
 }; 
 
 void CheckShaderCompileState(unsigned int ID, SHADERTYPE type);
@@ -191,11 +244,23 @@ public:
 			glEnable(GL_CULL_FACE);
 			glCullFace((GLenum)m_options.cullMode);
 		}
-		else
+		else{if(glIsEnabled(GL_CULL_FACE))glDisable(GL_CULL_FACE);}
+		//模板测试
+		if(m_options.StencilMask != 0)
 		{
-			glDisable(GL_CULL_FACE);
+			glEnable(GL_STENCIL_TEST);
+			glStencilFunc((GLenum)m_options.StencilFunc,m_options.Stencilref,0xff);
+			glStencilOp((GLenum)m_options.stencilFail,(GLenum)m_options.stencilDpFail,(GLenum)m_options.stencilDpPass);
 		}
-
+		else{if(glIsEnabled(GL_STENCIL_TEST))glDisable(GL_STENCIL_TEST);}
+		//混和
+		if(m_options.enableBlend)
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc((GLenum)m_options.sFactor,(GLenum)m_options.dFactor);
+			glBlendEquation((GLenum)m_options.blendEq);
+		}
+		else{if(glIsEnabled(GL_BLEND))glDisable(GL_BLEND);}
 	}
 private:
 	unsigned int m_id;

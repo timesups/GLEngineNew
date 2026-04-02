@@ -8,10 +8,6 @@ GLSLShader
     {
         Pass
         { 
-
-            Zwrite on
-            Zfunc always
-            Cull back
             GLSLPROGRAM
             #include "/include/Core.glsl"
             #include "/include/Light.glsl"

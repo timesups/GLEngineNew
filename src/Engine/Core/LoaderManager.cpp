@@ -15,9 +15,97 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <string>
 #include <unordered_set>
 
 static constexpr const char* kModule = "LoaderManager";
+
+
+
+Func DeterminFuncByString(const std::string& state)
+{
+	if (state == "always")
+		return Func::ALWAYS;
+	else if (state == "never")
+		return Func::NEVER;
+	else if (state == "less")
+		return Func::LESS;
+	else if (state == "equal")
+		return Func::EQUAL;
+	else if (state == "lequal")
+		return Func::LEQUAL;
+	else if (state == "greater")
+		return Func::GREATER;
+	else if (state == "notequal")
+		return Func::NOTEQUAL;
+	else if (state == "gequal")
+		return Func::GEQUAL;
+
+	return Func::ALWAYS;
+}
+
+StencilOp DeterminOpByString(const std::string& state)
+{
+	if(state == "keep")
+		return StencilOp::KEEP;
+	else if(state == "zero")
+		return StencilOp::ZERO;
+	else if(state == "replace")
+		return StencilOp::REPLACE;
+	else if(state == "incr")
+		return StencilOp::INCR;
+	else if(state == "incrwrap")
+		return StencilOp::INCR_WRAP;
+	else if(state == "decr")
+		return StencilOp::DECR;
+	else if(state == "decrwrap")
+		return StencilOp::DECR_WRAP;
+	else if(state == "invert")
+		return StencilOp::INVERT;
+	return StencilOp::KEEP;
+}
+
+BlendFunc DeterminBlendFunc(const std::string& state) 
+{
+	if (state == "zero")
+		return BlendFunc::ZERO;
+	else if (state == "one")
+		return BlendFunc::ONE;
+	else if (state == "srccolor")
+		return BlendFunc::SRC_COLOR;
+	else if (state == "oneminuscrccolor")
+		return BlendFunc::ONE_MINUS_SRC_COLOR;
+	else if (state == "dstcolor")
+		return BlendFunc::DST_COLOR;
+	else if (state == "oneminusdstcolor")
+		return BlendFunc::ONE_MINUS_DST_COLOR;
+	else if (state == "srcalpha")
+		return BlendFunc::SRC_ALPHA;
+	else if (state == "oneminussrcalpha")
+		return BlendFunc::ONE_MINUS_SRC_ALPHA;
+	else if (state == "dstalpha")
+		return BlendFunc::DST_ALPHA;
+	else if (state == "oneminusdstalpha")
+		return BlendFunc::ONE_MINUS_DST_ALPHA;
+	return BlendFunc::ZERO;
+}
+
+BlendEq DeterminBlendEquation(const std::string& state) 
+{
+	if (state == "add")
+		return BlendEq::ADD;
+	else if (state == "subtract")
+		return BlendEq::SUBTRACT;
+	else if (state == "reversesubtract")
+		return BlendEq::REVERSE_SUBTRACT;
+	else if (state == "min")
+		return BlendEq::MIN;
+	else if (state == "max")
+		return BlendEq::MAX;
+	return BlendEq::ADD;
+}
+
+
 
 LoaderManager::LoaderManager()
 {
@@ -164,6 +252,7 @@ bool LoaderManager::LoadShader(const std::string& path, std::shared_ptr<Shader>&
 		std::istringstream iss(pass);
 		std::string line;
 		bool realCodeFlag = false;
+		bool isInStencilBlock = false;
 		while (std::getline(iss, line))
 		{
 			if (line.find("GLSLPROGRAM") != std::string::npos)
@@ -203,22 +292,8 @@ bool LoaderManager::LoadShader(const std::string& path, std::shared_ptr<Shader>&
 			{
 				int start = lineLower.find("zfunc");
 				std::string state = lineLower.substr(start + 6);
-				if (state == "always")
-					option.zTest = ZTEST::ALWAYS;
-				else if (state == "never")
-					option.zTest = ZTEST::NEVER;
-				else if (state == "less")
-					option.zTest = ZTEST::LESS;
-				else if (state == "equal")
-					option.zTest = ZTEST::EQUAL;
-				else if (state == "lequal")
-					option.zTest = ZTEST::LEQUAL;
-				else if (state == "greater")
-					option.zTest = ZTEST::GREATER;
-				else if (state == "notequal")
-					option.zTest = ZTEST::NOTEQUAL;
-				else if (state == "gequal")
-					option.zTest = ZTEST::GEQUAL;
+				option.zTest = DeterminFuncByString(state);
+
 			}
 			else if (lineLower.find("cull") != std::string::npos)
 			{
@@ -233,17 +308,77 @@ bool LoaderManager::LoadShader(const std::string& path, std::shared_ptr<Shader>&
 			}
 			else if (lineLower.find("blend") != std::string::npos)
 			{
-				//blend = true;
-				//int start = lineLower.find("blend");
-				//std::string state = lineLower.substr(start + 6);
-				//int splitIndex = state.find(" ");
-				//if (splitIndex == std::string::npos)
-				//	continue;
-				//std::string src = state.substr(0, splitIndex);
-				//std::string dst = state.substr(splitIndex + 1);
-				//setBlendFunc(sFactor, src);
-				//setBlendFunc(dFactor, dst);
+				option.enableBlend = true;
+				int space = lineLower.find("blend ");
+				std::string state = lineLower.substr(space+6);
+				space = state.find(" ");
+				option.sFactor = DeterminBlendFunc(state.substr(0,space));
+				option.dFactor = DeterminBlendFunc(state.substr(space+1));
 			}
+			else if (lineLower.find("blendeq") != std::string::npos)
+			{
+				int start = lineLower.find("blendeq");
+				std::string state = lineLower.substr(start + 8);
+				option.blendEq = DeterminBlendEquation(state);
+			}
+			else if(lineLower.find("stencil") != std::string::npos)
+			{
+				isInStencilBlock = true;
+				continue;
+			}
+			
+			if(isInStencilBlock)
+			{
+				if(lineLower.find("{") != std::string::npos)
+				{
+					continue;
+				}
+				else if(lineLower.find("mask") != std::string::npos)
+				{
+					int start = lineLower.find("mask");
+					std::string state = lineLower.substr(start + 5);
+					option.StencilMask = std::stoi(state,nullptr,0);
+					continue;
+				}
+				else if(lineLower.find("func") != std::string::npos)
+				{
+					int start = lineLower.find("func");
+					std::string state = lineLower.substr(start + 5);
+					option.StencilFunc = DeterminFuncByString(state);
+					continue;
+				}
+				else if(lineLower.find("ref") != std::string::npos)
+				{
+					int start = lineLower.find("ref");
+					std::string state = lineLower.substr(start + 4);
+					option.Stencilref = std::stoi(state,nullptr,0);
+					continue;
+				}
+				else if(lineLower.find("fail") != std::string::npos)
+				{
+					int start = lineLower.find("fail");
+					std::string state = lineLower.substr(start + 5);
+					option.stencilFail = DeterminOpByString(state);
+					continue;
+				}
+				else if(lineLower.find("dpfail") != std::string::npos)
+				{
+					int start = lineLower.find("dpfail");
+					std::string state = lineLower.substr(start + 7);
+					option.stencilDpFail = DeterminOpByString(state);
+				}
+				else if(lineLower.find("dppass") != std::string::npos)
+				{
+					int start = lineLower.find("dppass");
+					std::string state = lineLower.substr(start + 7);
+					option.stencilDpPass = DeterminOpByString(state);
+				}
+				else if (lineLower.find("}") != std::string::npos)
+				{
+					isInStencilBlock = false;
+				}
+			}
+
 			if (iss.eof())
 				break;
 		}

@@ -13,8 +13,6 @@ Renderer::Renderer()
 
 	//启用各种测试
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_STENCIL_TEST);
-	glEnable(GL_BLEND);
 }
 
 void Renderer::Render(RenderContext& context)

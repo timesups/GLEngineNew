@@ -8,7 +8,17 @@ GLSLShader
     {
         Pass
         { 
-            cull back
+            Cull back
+            Stencil
+            {
+                Mask 0xff
+                Func Always
+                Ref 1
+                Fail Keep
+                DpFail Keep
+                DpPass Keep
+            }
+            Blend SrcAlpha OneMinusSrcAlpha
             GLSLPROGRAM
             #include "/include/Core.glsl"
             #include "/include/Light.glsl"
@@ -37,7 +47,7 @@ GLSLShader
             void main() 
             {
                 vec4 tex_color = texture(tex,v2f.uv);
-                FragColor = vec4(tex_color.xyz ,1.0);
+                FragColor = vec4(tex_color.xyz ,0.1);
             }
             #endif
             ENDGLSL
