@@ -6,9 +6,8 @@
 
 #include <glm/glm.hpp>
 
-#include "Mesh.h"
-#include "Shader.h"
-#include "Texture.h"
+#include "Shader.hpp"
+#include "Texture.hpp"
 
 
 enum class MaterialPropertyType

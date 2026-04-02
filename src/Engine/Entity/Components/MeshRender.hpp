@@ -2,11 +2,11 @@
 #include "glm/ext/matrix_float4x4.hpp"
 #include <memory>
 
-#include "../../Renderer/Asset/Model.h"
-#include "Component.h"
-#include "Transform.h"
-#include "../Entity.h"
-#include "../../Renderer/AssetManager.h"
+#include "../../Renderer/Asset/Model.hpp"
+#include "Component.hpp"
+#include "Transform.hpp"
+#include "../Entity.hpp"
+#include "../../Renderer/AssetManager.hpp"
 
 
 

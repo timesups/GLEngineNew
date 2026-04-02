@@ -7,7 +7,7 @@
 
 
 
-#include "Components/Component.h"
+#include "Components/Component.hpp"
 
 
 class Entity 
@@ -65,9 +65,28 @@ public:
 		return m_components.find(typeid(T)) != m_components.end();
 	}
 
-	void Init();
-	void Update(float deltaTime);
-	void Render();
+	void Init() 
+	{
+		for(auto& [type,component] : m_components)
+		{
+			component->Init();
+		}
+	}
+
+	void Update(float deltaTime) 
+	{
+		for (auto& [type, component] : m_components)
+		{
+			component->Update(deltaTime);
+		}
+	}
+	void Render()
+	{
+		for (auto& [type, component] : m_components)
+		{
+			component->Render();
+		}
+	}
 public:
 	std::string m_name;
 private:

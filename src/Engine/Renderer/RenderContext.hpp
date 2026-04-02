@@ -2,8 +2,8 @@
 #include <memory>
 #include <glm/glm.hpp>
 
-#include "../Entity/EntityManager.h"
-#include "../Entity/Components/Transform.h"
+#include "../Entity/EntityManager.hpp"
+#include "../Entity/Components/Transform.hpp"
 class Entity;
 // 每帧由 Window::Run 在调用 renderCallback 前更新
 class RenderContext

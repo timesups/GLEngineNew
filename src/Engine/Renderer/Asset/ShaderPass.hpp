@@ -4,10 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "../../Core/Log.h"
+#include "../../Core/Log.hpp"
 
 
-static constexpr const char* kShaderPassModule = "Shader";
+#define MODULE "Shader"
 
 enum SHADERTYPE
 {
@@ -176,7 +176,7 @@ private:
 	std::string m_name;
 };
 
-inline void CheckShaderCompileState(unsigned int ID, SHADERTYPE type)
+void CheckShaderCompileState(unsigned int ID, SHADERTYPE type)
 {
 	int success;
 	char infoLog[512];
@@ -187,7 +187,7 @@ inline void CheckShaderCompileState(unsigned int ID, SHADERTYPE type)
 		if (!success)
 		{
 			glGetProgramInfoLog(ID, 512, NULL, infoLog);
-			Log(kShaderPassModule, LogLevel::ERROR, "ERROR:SHADER::PROGRAM::LINK_FAIED\n{}", infoLog);
+			Log(MODULE, LogLevel::ERROR, "ERROR:SHADER::PROGRAM::LINK_FAIED\n{}", infoLog);
 		}
 	}
 	else
@@ -198,13 +198,13 @@ inline void CheckShaderCompileState(unsigned int ID, SHADERTYPE type)
 			switch (type)
 			{
 			case VERTEX:
-				Log(kShaderPassModule, LogLevel::ERROR, "ERROR::SHADER::VERTEX::COMPIATION_FAILED\n{}", infoLog);
+				Log(MODULE, LogLevel::ERROR, "ERROR::SHADER::VERTEX::COMPIATION_FAILED\n{}", infoLog);
 				break;
 			case FRAGMENT:
-				Log(kShaderPassModule, LogLevel::ERROR, "ERROR::SHADER::FRAGMENT::COMPIATION_FAILED\n{}", infoLog);
+				Log(MODULE, LogLevel::ERROR, "ERROR::SHADER::FRAGMENT::COMPIATION_FAILED\n{}", infoLog);
 				break;
 			case GEOMETRY:
-				Log(kShaderPassModule, LogLevel::ERROR, "ERROR::SHADER::GEOMETRY::COMPIATION_FAILED\n{}", infoLog);
+				Log(MODULE, LogLevel::ERROR, "ERROR::SHADER::GEOMETRY::COMPIATION_FAILED\n{}", infoLog);
 				break;
 			default:
 				break;

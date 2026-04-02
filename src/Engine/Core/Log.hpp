@@ -11,7 +11,7 @@ enum class LogLevel
 };
 
 
-inline void Log(const char* module, LogLevel level, std::string_view text)
+void Log(const char* module, LogLevel level, std::string_view text)
 {
     const char* levelStr = "";
     switch (level)
