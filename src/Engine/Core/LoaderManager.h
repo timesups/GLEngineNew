@@ -69,9 +69,16 @@ struct FileState
 		this->path = path;
 		UpdateModifyTime();
 	}
-	void AddRelativeAsset(std::shared_ptr<T> asset) 
+	void AddRelativeAsset(std::shared_ptr<T> asset)
 	{
-		relativeAsset.push_back(asset);
+		if (!asset)
+			return;
+		for (const auto& existing : relativeAsset)
+		{
+			if (existing == asset)
+				return;
+		}
+		relativeAsset.push_back(std::move(asset));
 	}
 	void UpdateModifyTime() 
 	{
@@ -105,7 +112,7 @@ public:
 public:
 	void UpdateAssetFromDisk();
 	bool LoadTextureFromFile(const std::string& path, std::shared_ptr<Texture>& tex);
-	bool LoadShader(const std::string& path, std::shared_ptr<Shader>& shader);
+	bool LoadShader(const std::string& path, std::shared_ptr<Shader>& shader,bool reload = false);
 	bool LoadModel(const std::string& path, std::shared_ptr<Model>& model);
 private:
 	void ProcessNode(aiNode* node, const aiScene* scene);

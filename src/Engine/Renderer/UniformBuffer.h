@@ -12,87 +12,28 @@ class UniformBuffer
 public:
 	UniformBuffer() = default;
 
-	explicit UniformBuffer(size_t sizeBytes, GLenum usage = GL_STATIC_DRAW)
-	{
-		Create(sizeBytes, usage);
-	}
-
-	~UniformBuffer()
-	{
-		Destroy();
-	}
+	explicit UniformBuffer(size_t sizeBytes, GLenum usage = GL_STATIC_DRAW);
+	~UniformBuffer();
 
 	UniformBuffer(const UniformBuffer&) = delete;
 	UniformBuffer& operator=(const UniformBuffer&) = delete;
 
-    UniformBuffer(UniformBuffer&& other) noexcept
-    : m_id(other.m_id), m_size(other.m_size), m_usage(other.m_usage)
-{
-    other.m_id = 0;
-    other.m_size = 0;
-}
-UniformBuffer& operator=(UniformBuffer&& other) noexcept
-{
-    if (this != &other)
-    {
-        Destroy();
-        m_id = other.m_id;
-        m_size = other.m_size;
-        m_usage = other.m_usage;
-        other.m_id = 0;
-        other.m_size = 0;
-    }
-    return *this;
-}
-
+	UniformBuffer(UniformBuffer&& other) noexcept;
+	UniformBuffer& operator=(UniformBuffer&& other) noexcept;
 
 	/// 创建或重建缓冲；已有缓冲会先删除。
-	void Create(size_t sizeBytes, GLenum usage = GL_DYNAMIC_DRAW)
-	{
-		Destroy();
-		if (sizeBytes == 0)
-			return;
-		glGenBuffers(1, &m_id);
-		glBindBuffer(GL_UNIFORM_BUFFER, m_id);
-		glBufferData(GL_UNIFORM_BUFFER, static_cast<GLsizeiptr>(sizeBytes), nullptr, usage);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-		m_size = sizeBytes;
-		m_usage = usage;
-	}
-
-	void Destroy()
-	{
-		if (m_id != 0)
-		{
-			glDeleteBuffers(1, &m_id);
-			m_id = 0;
-			m_size = 0;
-		}
-	}
+	void Create(size_t sizeBytes, GLenum usage = GL_DYNAMIC_DRAW);
+	void Destroy();
 
 	bool IsValid() const { return m_id != 0; }
 	GLuint GetId() const { return m_id; }
 	size_t GetByteSize() const { return m_size; }
 
 	/// 将整个 UBO 绑到绑定点（对应 uniform block 的 binding = N）。
-	void BindBase(GLuint uniformBlockBinding) const
-	{
-		if (m_id != 0)
-			glBindBufferBase(GL_UNIFORM_BUFFER, uniformBlockBinding, m_id);
-	}
-
+	void BindBase(GLuint uniformBlockBinding) const;
 
 	/// 上传 [offset, offset + size)；size 不得超过 Create 时的大小。
-	void Upload(const void* data, size_t size, size_t offset = 0)
-	{
-		if (!data || m_id == 0 || size == 0)
-			return;
-		if (offset + size > m_size)
-			return;
-		glBindBuffer(GL_UNIFORM_BUFFER, m_id);
-		glBufferSubData(GL_UNIFORM_BUFFER, static_cast<GLintptr>(offset), static_cast<GLsizeiptr>(size), data);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	}
+	void Upload(const void* data, size_t size, size_t offset = 0);
 
 	/// trivially copyable 类型整块上传；须与 GLSL std140 内存布局一致。
 	template<typename T>

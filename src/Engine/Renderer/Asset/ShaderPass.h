@@ -19,9 +19,9 @@ enum SHADERTYPE
 
 enum class CullMode
 {
-	BACK,//Ĭ���޳�����
-	FRONT,//�޳�����
-	OFF,//˫����Ⱦ
+	BACK = GL_BACK,
+	FRONT = GL_FRONT,
+	OFF = 0,
 };
 
 
@@ -49,6 +49,8 @@ struct PassCode
 struct PassOption
 {
 	ZTEST zTest = ZTEST::LESS;
+	bool ZWrite = true;
+	CullMode cullMode = CullMode::OFF;
 }; 
 
 void CheckShaderCompileState(unsigned int ID, SHADERTYPE type);
@@ -130,6 +132,10 @@ public:
 	{
 		glUniform3f(glGetUniformLocation(m_id, name.c_str()), value.x, value.y, value.z);
 	}
+	void SetValue(const std::string& name, const glm::vec2& value) const
+	{
+		glUniform2f(glGetUniformLocation(m_id, name.c_str()), value.x, value.y);
+	}
 	void SetValue(const std::string& name, float x, float y, float z) const
 	{
 		glUniform3f(glGetUniformLocation(m_id, name.c_str()), x, y, z);
@@ -154,6 +160,10 @@ public:
 	{
 		glUniformMatrix4fv(glGetUniformLocation(m_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 	}
+	void SetValue(const std::string& name, const glm::mat3& value) const
+	{
+		glUniformMatrix3fv(glGetUniformLocation(m_id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+	}
 	PassOption& GetOptions() 
 	{
 		return m_options;
@@ -169,6 +179,23 @@ public:
 	const std::string& GetName()
 	{
 		return m_name;
+	}
+	void SetState() const
+	{
+		//深度测试
+		glDepthMask((GLboolean)m_options.ZWrite);
+		glDepthFunc((GLenum)m_options.zTest);
+		//面剔除
+		if(m_options.cullMode != CullMode::OFF)
+		{
+			glEnable(GL_CULL_FACE);
+			glCullFace((GLenum)m_options.cullMode);
+		}
+		else
+		{
+			glDisable(GL_CULL_FACE);
+		}
+
 	}
 private:
 	unsigned int m_id;

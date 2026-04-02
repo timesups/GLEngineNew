@@ -3,7 +3,7 @@
 
 #include "../../Core/Log.h"
 
-#define MODULE "Texture"
+inline constexpr const char* kTextureLogModule = "Texture";
 
 class Texture 
 {
@@ -49,7 +49,7 @@ public:
 	{
 		if (!m_id) 
 		{
-			Log(MODULE, LogLevel::ERROR, "Try to bind a invalid texture");
+			Log(kTextureLogModule, LogLevel::ERROR, "Try to bind a invalid texture");
 			return;
 		}
 		if(m_isBound && m_lastBoundUnit == uint)

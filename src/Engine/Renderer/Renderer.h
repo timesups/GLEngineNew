@@ -13,9 +13,9 @@ class Renderer
 public:
     Renderer();
     ~Renderer() = default;
-
     // 渲染场景
     void Render(RenderContext& context);
+    
 private:
     UniformBuffer cameraBuffer{ sizeof(DataInputsStd140) };
 };

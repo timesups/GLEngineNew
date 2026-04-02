@@ -15,6 +15,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <unordered_set>
 
 static constexpr const char* kModule = "LoaderManager";
 
@@ -26,15 +27,63 @@ LoaderManager::LoaderManager()
 
 void LoaderManager::UpdateAssetFromDisk()
 {
+	std::vector<std::string> dirtyPaths;
+	dirtyPaths.reserve(m_shaderFiles.size());
 	for (auto& [path, file] : m_shaderFiles)
 	{
 		if (file.IsNeedReload())
+			dirtyPaths.push_back(path);
+	}
+	if (dirtyPaths.empty())
+		return;
+
+	Log(kModule, LogLevel::INFO, "Shader hot-reload: {} file(s) changed", dirtyPaths.size());
+
+	std::unordered_set<Shader*> seen;
+	std::vector<std::shared_ptr<Shader>> uniqueShaders;
+	for (const std::string& path : dirtyPaths)
+	{
+		auto it = m_shaderFiles.find(path);
+		if (it == m_shaderFiles.end())
+			continue;
+		for (auto& shader : it->second.relativeAsset)
 		{
-			for (auto& shader : file.relativeAsset)
+			if (!shader)
+				continue;
+			if (seen.insert(shader.get()).second)
+				uniqueShaders.push_back(shader);
+		}
+	}
+
+	std::unordered_set<Shader*> failed;
+	for (auto& shader : uniqueShaders)
+	{
+		if (!LoadShader(shader->m_path, shader, true))
+		{
+			failed.insert(shader.get());
+			Log(kModule, LogLevel::ERROR, "Shader reload failed: {} ({})", shader->m_name, shader->m_path);
+		}
+		else
+			Log(kModule, LogLevel::INFO, "Shader reload OK: {} ({})", shader->m_name, shader->m_path);
+	}
+
+	for (const std::string& path : dirtyPaths)
+	{
+		auto it = m_shaderFiles.find(path);
+		if (it == m_shaderFiles.end())
+			continue;
+		FileState<Shader>& file = it->second;
+		bool anyFailed = false;
+		for (auto& shader : file.relativeAsset)
+		{
+			if (shader && failed.count(shader.get()))
 			{
-				LoadShader(shader->m_path, shader);
+				anyFailed = true;
+				break;
 			}
 		}
+		if (!anyFailed)
+			file.UpdateModifyTime();
 	}
 }
 
@@ -65,18 +114,19 @@ bool LoaderManager::LoadTextureFromFile(const std::string& path, std::shared_ptr
 	FileState<Texture> file(path);
 	file.AddRelativeAsset(tex);
 	m_TextureFiles[path] = file;
+	Log(kModule, LogLevel::INFO, "Texture loaded: {} ({}x{}, {} ch)", path, width, height, channels);
 	return true;
 }
 
-bool LoaderManager::LoadShader(const std::string& path, std::shared_ptr<Shader>& shader)
+bool LoaderManager::LoadShader(const std::string& path, std::shared_ptr<Shader>& shader,bool reload)
 {
 	//检查路径是否已经加载
-	if (m_shaderFiles.find(path) != m_shaderFiles.end())
+	if (m_shaderFiles.find(path) != m_shaderFiles.end() && !reload)
 	{
 		shader = m_shaderFiles[path].relativeAsset[0];
 		return true;
 	}
-	Log(kModule, LogLevel::INFO, "Loading shader from path:{}", path);
+	Log(kModule, LogLevel::INFO, "{}{}", reload ? "Reloading shader: " : "Loading shader: ", path);
 	shader->m_name = path.substr(path.find_last_of("/") + 1, path.find_last_of(".") - path.find_last_of("/") - 1);
 	shader->m_path = path;
 	currentShader = shader;
@@ -87,7 +137,7 @@ bool LoaderManager::LoadShader(const std::string& path, std::shared_ptr<Shader>&
 	int SubShaderStartPoint = static_cast<int>(shaderCodeLower.find("subshader"));
 	if (SubShaderStartPoint == std::string::npos)
 	{
-		std::cout << "####" << "Shader:" << path << " SubShader not exist" << "####" << std::endl;
+		Log(kModule, LogLevel::ERROR, "Shader '{}' has no SubShader block", path);
 		return false;
 	}
 
@@ -140,7 +190,60 @@ bool LoaderManager::LoadShader(const std::string& path, std::shared_ptr<Shader>&
 				int nameEnd = static_cast<int>(lineLower.rfind("\""));
 				code.passName = line.substr(nameStart, nameEnd - nameStart);
 			}
-
+			else if (lineLower.find("zwrite") != std::string::npos)
+			{
+				int start = lineLower.find("zwrite");
+				std::string state = lineLower.substr(start + 7);
+				if (state == "off")
+					option.ZWrite = false;
+				else
+					option.ZWrite = true;
+			}
+			else if (lineLower.find("zfunc") != std::string::npos)
+			{
+				int start = lineLower.find("zfunc");
+				std::string state = lineLower.substr(start + 6);
+				if (state == "always")
+					option.zTest = ZTEST::ALWAYS;
+				else if (state == "never")
+					option.zTest = ZTEST::NEVER;
+				else if (state == "less")
+					option.zTest = ZTEST::LESS;
+				else if (state == "equal")
+					option.zTest = ZTEST::EQUAL;
+				else if (state == "lequal")
+					option.zTest = ZTEST::LEQUAL;
+				else if (state == "greater")
+					option.zTest = ZTEST::GREATER;
+				else if (state == "notequal")
+					option.zTest = ZTEST::NOTEQUAL;
+				else if (state == "gequal")
+					option.zTest = ZTEST::GEQUAL;
+			}
+			else if (lineLower.find("cull") != std::string::npos)
+			{
+				int start = lineLower.find("cull");
+				std::string state = lineLower.substr(start + 5);
+				if (state == "front")
+					option.cullMode = CullMode::FRONT;
+				else if (state == "back")
+					option.cullMode = CullMode::BACK;
+				else if (state == "off")
+					option.cullMode = CullMode::OFF;
+			}
+			else if (lineLower.find("blend") != std::string::npos)
+			{
+				//blend = true;
+				//int start = lineLower.find("blend");
+				//std::string state = lineLower.substr(start + 6);
+				//int splitIndex = state.find(" ");
+				//if (splitIndex == std::string::npos)
+				//	continue;
+				//std::string src = state.substr(0, splitIndex);
+				//std::string dst = state.substr(splitIndex + 1);
+				//setBlendFunc(sFactor, src);
+				//setBlendFunc(dFactor, dst);
+			}
 			if (iss.eof())
 				break;
 		}
@@ -157,6 +260,12 @@ bool LoaderManager::LoadShader(const std::string& path, std::shared_ptr<Shader>&
 	}
 	(void)currentPassIndex;
 
+	if (codes.empty())
+	{
+		Log(kModule, LogLevel::ERROR, "Shader '{}' has no Pass blocks", path);
+		return false;
+	}
+
 	shader->CompileShaderFromCode(codes, options);
 	return true;
 }
@@ -172,10 +281,11 @@ bool LoaderManager::LoadModel(const std::string& path, std::shared_ptr<Model>& m
 	const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
-		std::cout << "ERROR:ASSIMP::" << importer.GetErrorString() << std::endl;
+		Log(kModule, LogLevel::ERROR, "Assimp failed '{}': {}", path, importer.GetErrorString());
 		return false;
 	}
 	ProcessNode(scene->mRootNode, scene);
+	Log(kModule, LogLevel::INFO, "Model '{}' loaded ({} mesh sections)", model->m_name, model->m_meshSections.size());
 	return true;
 }
 
@@ -217,9 +327,9 @@ void LoaderManager::ProcessMesh(aiMesh* mesh, const aiScene* /*scene*/)
 		//顶点颜色
 		if (mesh->mColors[0])
 		{
-			vector.x = mesh->mColors[0]->r;
-			vector.y = mesh->mColors[0]->g;
-			vector.z = mesh->mColors[0]->b;
+			vector.x = mesh->mColors[0][i].r;
+			vector.y = mesh->mColors[0][i].g;
+			vector.z = mesh->mColors[0][i].b;
 			vertex.Color = vector;
 		}
 		else
@@ -230,8 +340,8 @@ void LoaderManager::ProcessMesh(aiMesh* mesh, const aiScene* /*scene*/)
 		if (mesh->mTextureCoords[0])
 		{
 			glm::vec2 vec;
-			vec.x = mesh->mTextureCoords[0]->x;
-			vec.y = mesh->mTextureCoords[0]->y;
+			vec.x = mesh->mTextureCoords[0][i].x;
+			vec.y = mesh->mTextureCoords[0][i].y;
 			vertex.Texcoord = vec;
 		}
 		else
@@ -272,6 +382,11 @@ std::string LoaderManager::ReadAndPerprocessShaderFile(const std::string& path)
 	try
 	{
 		shaderFile.open(path);
+		if (!shaderFile.is_open())
+		{
+			Log(kModule, LogLevel::ERROR, "Cannot open shader file: {}", path);
+			return shaderCode;
+		}
 		std::string line;
 		while (std::getline(shaderFile, line))
 		{

@@ -25,6 +25,8 @@ public:
 
 	void AccumulateScrollDeltaY(float dy) { m_scrollDeltaY += dy; }
 
+	void switchCursorVisibility();
+
 private:
 	GLFWwindow* win = nullptr;
 	float m_scrollDeltaY = 0.f;
@@ -39,6 +41,10 @@ private:
 	float m_axisRight = 0.f;
 	float m_axisWorldUp = 0.f;
 	bool m_sprintHeld = false;
+
+	bool m_showCursor = true;
+	/// 上一帧 F1 是否处于按下（用于边沿检测，避免按住时每帧反复切换）
+	bool m_f1KeyWasDown = false;
 
 	friend void processInput(GLFWwindow* window);
 	friend void mouse_callback(GLFWwindow* window, double xpos, double ypos);

@@ -8,7 +8,7 @@ vec4 ObjectToClipPos(vec3 pos)
 }
 
 
-vec3 ObjectToWorldNormal(vec3 normal)
+vec3 ObjectToWorldN(vec3 normal)
 {
     return(normalize(mat3(GL_MATRIX_N) * aNormal));
 }

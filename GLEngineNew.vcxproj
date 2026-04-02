@@ -150,6 +150,7 @@
     <ClCompile Include="src\Engine\Core\Window.cpp" />
     <ClCompile Include="src\Engine\Renderer\AssetManager.cpp" />
     <ClCompile Include="src\Engine\Renderer\Renderer.cpp" />
+    <ClCompile Include="src\Engine\Renderer\UniformBuffer.cpp" />
     <ClCompile Include="src\Engine\Entity\Entity.cpp" />
     <ClCompile Include="src\Engine\Entity\EntityManager.cpp" />
     <ClCompile Include="src\main.cpp" />

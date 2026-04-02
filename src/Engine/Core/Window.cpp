@@ -1,6 +1,7 @@
 #include "Window.h"
 
 #include "../Core/Log.h"
+#include "GLFW/glfw3.h"
 
 static constexpr const char* kModule = "Window";
 
@@ -28,6 +29,11 @@ static void processInput(GLFWwindow* window)
 		w->m_axisWorldUp += 1.f;
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 		w->m_axisWorldUp -= 1.f;
+	const int f1State = glfwGetKey(window, GLFW_KEY_F1);
+	const bool f1Down = (f1State == GLFW_PRESS);
+	if (f1Down && !w->m_f1KeyWasDown)
+		w->switchCursorVisibility();
+	w->m_f1KeyWasDown = f1Down;
 
 	w->m_sprintHeld = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS);
 }
@@ -36,6 +42,8 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	Window* w = static_cast<Window*>(glfwGetWindowUserPointer(window));
 	if (!w)
+		return;
+	if (w->m_showCursor)
 		return;
 	if (w->m_firstMouse)
 	{
@@ -53,7 +61,7 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 static void scroll_callback(GLFWwindow* window, double /*xoffset*/, double yoffset)
 {
 	Window* w = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	if (w)
+	if (w && !w->m_showCursor)
 		w->AccumulateScrollDeltaY(static_cast<float>(yoffset));
 }
 
@@ -65,12 +73,15 @@ static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 		myWindow->vWidth = width;
 		myWindow->vHeight = height;
 	}
+	if (width <= 0 || height <= 0)
+		Log(kModule, LogLevel::WARNING, "Framebuffer size invalid: {}x{}", width, height);
 	glViewport(0, 0, width, height);
 }
 
 Window::Window()
 {
-	glfwInit();
+	if (!glfwInit())
+		Log(kModule, LogLevel::ERROR, "glfwInit failed");
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -82,6 +93,14 @@ Window::~Window()
 	if (win)
 		glfwDestroyWindow(win);
 	glfwTerminate();
+}
+
+void Window::switchCursorVisibility()
+{
+	m_showCursor = !m_showCursor;
+	m_firstMouse = true;
+	if (win)
+		glfwSetInputMode(win, GLFW_CURSOR, m_showCursor ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 }
 
 bool Window::Create(const int w, const int h, const char* title)
@@ -103,6 +122,10 @@ bool Window::Create(const int w, const int h, const char* title)
 		return false;
 	}
 
+	GLint glMajor = 0, glMinor = 0;
+	glGetIntegerv(GL_MAJOR_VERSION, &glMajor);
+	glGetIntegerv(GL_MINOR_VERSION, &glMinor);
+
 	glViewport(0, 0, vWidth, vHeight);
 
 	glfwSetWindowUserPointer(win, this);
@@ -110,9 +133,10 @@ bool Window::Create(const int w, const int h, const char* title)
 	glfwSetCursorPosCallback(win, mouse_callback);
 	glfwSetScrollCallback(win, scroll_callback);
 
-	glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	m_firstMouse = true;
+	glfwSetInputMode(win, GLFW_CURSOR, m_showCursor ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 
+	Log(kModule, LogLevel::INFO, "Window created {}x{}, OpenGL {}.{}", vWidth, vHeight, glMajor, glMinor);
 	return true;
 }
 
@@ -153,5 +177,6 @@ void Window::Run(RenderContext& context)
 		glfwSwapBuffers(win);
 		glfwPollEvents();
 	}
+	Log(kModule, LogLevel::INFO, "Main loop exited");
 }
 
