@@ -2,7 +2,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Component.hpp"
+#include "Component.h"
 #include "glm/ext/vector_float3.hpp"
 #include "glm/matrix.hpp"
 

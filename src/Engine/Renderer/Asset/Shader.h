@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-#include "ShaderPass.hpp"
+#include "ShaderPass.h"
 
 
 

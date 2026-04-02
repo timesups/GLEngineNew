@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Mesh.hpp"
-#include "Material.hpp"
+#include "Mesh.h"
+#include "Material.h"
 
 
 class Model 

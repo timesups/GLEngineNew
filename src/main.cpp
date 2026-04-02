@@ -1,13 +1,13 @@
-#include "Engine/Core/Log.hpp"
-#include "Engine/Core/Window.hpp"
-#include "Engine/Entity/Components/Transform.hpp"
-#include "Engine/Renderer/RenderContext.hpp"
-#include "Engine/Renderer/AssetManager.hpp"
-#include "Engine/Entity/EntityManager.hpp"
-#include "Engine/Renderer/Renderer.hpp"
+#include "Engine/Core/Log.h"
+#include "Engine/Core/Window.h"
+#include "Engine/Entity/Components/Transform.h"
+#include "Engine/Renderer/RenderContext.h"
+#include "Engine/Renderer/AssetManager.h"
+#include "Engine/Entity/EntityManager.h"
+#include "Engine/Renderer/Renderer.h"
 
 
-#define MODULE "Main"
+static constexpr const char* kModule = "Main";
 
 int main() 
 {
@@ -15,7 +15,7 @@ int main()
 	std::unique_ptr<Window> win = std::make_unique<Window>();
 	if (!win->Create(800, 600, "GLEngine")) 
 	{
-		Log(MODULE,LogLevel::ERROR,"Failed to create window!");
+		Log(kModule,LogLevel::ERROR,"Failed to create window!");
 		return 0;
 	}
 
@@ -34,7 +34,8 @@ int main()
 	model->GetComponent<Transform>()->SetRotation(glm::vec3(0.0, 45.0, 0.0));
 	//初始化所有Entity
 	EntityManager::Get().Init();
-	
+
+
 	win->Run(context);
 
 	return 0;

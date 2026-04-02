@@ -2,8 +2,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Transform.hpp"
-#include "../Entity.hpp"
+#include "Transform.h"
+#include "../Entity.h"
 
 class Camera : public Component
 {
