@@ -47,7 +47,7 @@ GLSLShader
             void main() 
             {
                 vec4 tex_color = texture(tex,v2f.uv);
-                FragColor = vec4(tex_color.xyz ,0.1);
+                FragColor = vec4(tex_color.xyz ,1.0);
             }
             #endif
             ENDGLSL

@@ -13,6 +13,9 @@
     <ClCompile Include="external\imgui\imgui_widgets.cpp">
       <Filter>external\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="external\imgui\imgui_demo.cpp">
+      <Filter>external\imgui</Filter>
+    </ClCompile>
     <ClCompile Include="external\imgui\backends\imgui_impl_glfw.cpp">
       <Filter>external\imgui\backends</Filter>
     </ClCompile>

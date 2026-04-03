@@ -19,9 +19,20 @@ void Renderer::Render(RenderContext& context)
 {
 	//更新着色器
 	LoaderManager::Get().UpdateAssetFromDisk();
-	//清屏
+
+	const int vx = context.sceneViewportX;
+	const int vy = context.sceneViewportY;
+	const int vw = context.sceneViewportWidth > 0 ? context.sceneViewportWidth : context.width;
+	const int vh = context.sceneViewportHeight > 0 ? context.sceneViewportHeight : context.height;
+	const int fbw = context.framebufferWidth > 0 ? context.framebufferWidth : vw;
+	const int fbh = context.framebufferHeight > 0 ? context.framebufferHeight : vh;
+
+	// 先整帧缓冲清屏，避免 Dock 旁区域保留旧像素；再只在中央区做 3D 投影
+	glViewport(0, 0, fbw, fbh);
 	glClearColor(0, 0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	glViewport(vx, vy, vw, vh);
 	//相机更新
 	static bool s_loggedNoCameraEntity = false;
 	static bool s_loggedNoCameraComponent = false;

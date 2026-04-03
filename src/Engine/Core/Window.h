@@ -7,6 +7,9 @@
 #include "../Renderer/RenderContext.h"
 #include "../Entity/Entity.h"
 #include "../Entity/Components/Camera.h"
+#include "Gui.h"
+
+
 
 using RenderPipelineCallback = std::function<void(RenderContext&)>;
 
@@ -45,7 +48,7 @@ private:
 	bool m_showCursor = true;
 	/// 上一帧 F1 是否处于按下（用于边沿检测，避免按住时每帧反复切换）
 	bool m_f1KeyWasDown = false;
-
+	Gui ui;
 	friend void processInput(GLFWwindow* window);
 	friend void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 	friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
