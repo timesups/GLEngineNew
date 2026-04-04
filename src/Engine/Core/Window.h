@@ -28,8 +28,6 @@ public:
 
 	void AccumulateScrollDeltaY(float dy) { m_scrollDeltaY += dy; }
 
-	void switchCursorVisibility();
-
 private:
 	GLFWwindow* win = nullptr;
 	float m_scrollDeltaY = 0.f;
@@ -45,11 +43,10 @@ private:
 	float m_axisWorldUp = 0.f;
 	bool m_sprintHeld = false;
 
-	bool m_showCursor = true;
-	/// 上一帧 F1 是否处于按下（用于边沿检测，避免按住时每帧反复切换）
-	bool m_f1KeyWasDown = false;
+	/// 上一帧是否处于右键拖拽视角（用于边沿切换光标模式、重置首帧鼠标）
+	bool m_rmbLookPrev = false;
 	Gui ui;
-	friend void processInput(GLFWwindow* window);
+	friend void processInput(GLFWwindow* window, bool rmbLook);
 	friend void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 	friend void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 	friend void scroll_callback(GLFWwindow* window, double xoffse, double yoffset);

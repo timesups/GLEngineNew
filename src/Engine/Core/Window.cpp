@@ -64,7 +64,7 @@ static bool SceneViewportFromDockSpace(ImGuiID dockspaceRootId, int fbW, int fbH
 	return true;
 }
 
-static void processInput(GLFWwindow* window)
+static void processInput(GLFWwindow* window, bool rmbLook)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
@@ -77,8 +77,8 @@ static void processInput(GLFWwindow* window)
 	w->m_axisRight = 0.f;
 	w->m_axisWorldUp = 0.f;
 
-	// UI 模式：焦点在 ImGui 上时不处理行走键；游戏模式（隐藏光标）始终处理
-	const bool gameOnly = !w->m_showCursor;
+	// 按住右键：独占式游戏输入；否则仅在 ImGui 不抢键盘时处理行走键
+	const bool gameOnly = rmbLook;
 	const bool allowMoveKeys = gameOnly || !ImGui::GetIO().WantCaptureKeyboard;
 	if (allowMoveKeys)
 	{
@@ -95,11 +95,6 @@ static void processInput(GLFWwindow* window)
 		if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 			w->m_axisWorldUp -= 1.f;
 	}
-	const int f1State = glfwGetKey(window, GLFW_KEY_F1);
-	const bool f1Down = (f1State == GLFW_PRESS);
-	if (f1Down && !w->m_f1KeyWasDown)
-		w->switchCursorVisibility();
-	w->m_f1KeyWasDown = f1Down;
 
 	if (allowMoveKeys)
 		w->m_sprintHeld = (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS);
@@ -107,13 +102,18 @@ static void processInput(GLFWwindow* window)
 		w->m_sprintHeld = false;
 }
 
+static bool RmbCameraLookActive(GLFWwindow* window)
+{
+	return glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS
+		&& !ImGui::GetIO().WantCaptureMouse;
+}
+
 static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	Window* w = static_cast<Window*>(glfwGetWindowUserPointer(window));
 	if (!w)
 		return;
-	// 显示光标 / UI 模式：鼠标交给 ImGui，不累计视角
-	if (w->m_showCursor)
+	if (!RmbCameraLookActive(window))
 		return;
 	if (w->m_firstMouse)
 	{
@@ -131,7 +131,7 @@ static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 static void scroll_callback(GLFWwindow* window, double /*xoffset*/, double yoffset)
 {
 	Window* w = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	if (w && !w->m_showCursor)
+	if (w && RmbCameraLookActive(window))
 		w->AccumulateScrollDeltaY(static_cast<float>(yoffset));
 }
 
@@ -167,14 +167,6 @@ Window::~Window()
 	glfwTerminate();
 }
 
-void Window::switchCursorVisibility()
-{
-	m_showCursor = !m_showCursor;
-	m_firstMouse = true;
-	if (win)
-		glfwSetInputMode(win, GLFW_CURSOR, m_showCursor ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
-}
-
 bool Window::Create(const int w, const int h, const char* title)
 {
 	vWidth = w;
@@ -206,7 +198,7 @@ bool Window::Create(const int w, const int h, const char* title)
 	glfwSetScrollCallback(win, scroll_callback);
 
 	m_firstMouse = true;
-	glfwSetInputMode(win, GLFW_CURSOR, m_showCursor ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 	Log(kModule, LogLevel::INFO, "Window created {}x{}, OpenGL {}.{}", vWidth, vHeight, glMajor, glMinor);
 	//初始化imgui
@@ -221,6 +213,14 @@ void Window::Run(RenderContext& context)
 	{
 		glfwPollEvents();
 
+		const bool rmbLook = RmbCameraLookActive(win);
+		if (rmbLook != m_rmbLookPrev)
+		{
+			m_firstMouse = true;
+			glfwSetInputMode(win, GLFW_CURSOR, rmbLook ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+			m_rmbLookPrev = rmbLook;
+		}
+
 		const float now = static_cast<float>(glfwGetTime());
 		deltaTime = now - lastTime;
 		lastTime = now;
@@ -229,11 +229,10 @@ void Window::Run(RenderContext& context)
 		context.framebufferWidth = vWidth;
 		context.framebufferHeight = vHeight;
 
-		// F1：m_showCursor true = UI 模式（ImGui 吃输入）；false = 游戏模式（GLFW/相机）
-		const bool gameInputExclusive = !m_showCursor;
-		ui.BeginFrame(gameInputExclusive);
+		// 按住右键：隐藏光标、视角与移动交给 GLFW/相机；松开则 ImGui 可正常交互
+		ui.BeginFrame(rmbLook);
 
-		processInput(win);
+		processInput(win, rmbLook);
 
 		if (context.currentCamera)
 		{

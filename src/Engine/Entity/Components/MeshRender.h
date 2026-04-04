@@ -63,6 +63,8 @@ public:
 			return;;
 		m_materialOverride[index] = mat;
 	}
+
+	const std::shared_ptr<Model>& GetModel() const { return m_model; }
 private:
 	std::shared_ptr<Model> m_model;
 	std::vector<std::shared_ptr<Material>> m_materialOverride;
